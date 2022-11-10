@@ -1,0 +1,11 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UnrealEditor-RiderGameControl-Win64-DebugGame.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"D:\UnrealProjects\MyTestProject\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\DebugGame\RiderGameControl\RiderGameControl.cpp.obj"
+"D:\UnrealProjects\MyTestProject\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\DebugGame\RiderGameControl\Default.rc2.res"
+/OUT:"D:\UnrealProjects\MyTestProject\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\DebugGame\RiderGameControl\UnrealEditor-RiderGameControl-Win64-DebugGame.lib"

@@ -1,0 +1,12 @@
+{
+	"BuildId": "19505902",
+	"Modules": 
+	{
+		"RD": "UnrealEditor-RD-Win64-DebugGame.dll",
+		"RiderBlueprint": "UnrealEditor-RiderBlueprint-Win64-DebugGame.dll",
+		"RiderGameControl": "UnrealEditor-RiderGameControl-Win64-DebugGame.dll",
+		"RiderLink": "UnrealEditor-RiderLink-Win64-DebugGame.dll",
+		"RiderLogging": "UnrealEditor-RiderLogging-Win64-DebugGame.dll",
+		"RiderShaderInfo": "UnrealEditor-RiderShaderInfo-Win64-DebugGame.dll"
+	}
+}
