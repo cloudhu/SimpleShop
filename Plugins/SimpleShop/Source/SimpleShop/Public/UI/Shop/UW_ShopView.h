@@ -26,11 +26,8 @@ class SIMPLESHOP_API UUW_ShopView : public UUW_ShopUIBase
 public:
 	UUW_ShopView(const FObjectInitializer& ObjectInitializer); //构造函数
 
-	/**
-	 * @brief 商店目录列表
-	 */
 	UPROPERTY(BlueprintReadOnly, Category = ShopView, meta = (BindWidget))
-	UListView* CategoryList;
+	UListView* CategoryList; //所有
 
 	UPROPERTY(BlueprintReadOnly, Category = ShopView, meta = (BindWidget))
 	UUniformGridPanel* ItemGrid; //物品列表
