@@ -29,7 +29,7 @@ void UUW_ShopView::NativeConstruct()
 	UCH_GameplayMessageSubsystem& MessageSystem = UCH_GameplayMessageSubsystem::Get(GetWorld());
 	ListenerHandle = MessageSystem.RegisterListener(TAG_Shop_CategoryOnClick_Message, this, &ThisClass::OnCategoryClicked);
 
-	//Use ShopSubsystem
+	//获取ShopSubsystem商店子系统单例 Use ShopSubsystem
 	UShopSubsystem& ShopSubsystem = UShopSubsystem::Get(GetWorld());
 
 	//1.查找对应品类的物品

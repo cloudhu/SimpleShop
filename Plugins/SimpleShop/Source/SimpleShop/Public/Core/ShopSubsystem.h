@@ -21,10 +21,22 @@ class SIMPLESHOP_API UShopSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 
+	/**
+	 * @brief 构造函数
+	 */
 	UShopSubsystem();
 public:
+	/**
+	 * @brief 获取
+	 * @param WorldContextObject 世界上下文对象
+	 * @return 商店子系统静态实例
+	 */
 	static UShopSubsystem& Get(const UObject* WorldContextObject);
 
+	/**
+	 * @brief 初始化
+	 * @param Collection 集合 
+	 */
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
 	/**
@@ -66,28 +78,59 @@ public:
 	 */
 	const FQuickBarConfiguration* GetQuickBarConfigurationByLevel(const int32 InLevel);
 
+	/**
+	 * @brief 析化
+	 */
 	virtual void Deinitialize() override;
 
-	/** 交易消息通知. */
+	/**
+	 * @brief 交易消息通知
+	 * @param Channel 消息频道标签
+	 * @param Notification 通知的交易消息 
+	 */
 	void OnNotificationTransactionMessage(FGameplayTag Channel, const FConfirmedTransactionMessage& Notification);
 
-	/// <summary>
-	/// 计算购买物品所需消耗
-	/// </summary>
-	/// <param name="InTable">物品数据</param>
-	/// <param name="bIsServer">是否是服务器调用</param>
-	/// <returns>消耗数目</returns>
+	/**
+	 * @brief 计算购买物品所需消耗
+	 * @param InTable 物品数据
+	 * @param InPawn 使用的角色
+	 * @param bIsServer 是否是服务器调用
+	 * @return 消耗数目
+	 */
 	int32 CalculateCompoundItemCost(const FItemTable* InTable, const APawn* InPawn, bool bIsServer = false);
 
-	//递归获取合成商品所需的物品编号
+	/**
+	 * @brief 递归获取合成商品所需的物品编号
+	 * @param InTable 物品配置表
+	 * @param ItemIds 物品编号
+	 */
 	void RecursivelyGetItemID(const FItemTable* InTable, TArray<int32>& ItemIds);
 
+	/**
+	 * @brief 获取
+	 * @return 最大背包等级
+	 */
 	int32 GetMaxInventoryLevel() const { return InventoryTables.Num(); }
+
+	/**
+	 * @brief 获取
+	 * @return 最大快捷栏等级
+	 */
 	int32 GetMaxQuickBarLevel() const { return QuickBarConfigurations.Num(); }
 public:
+	/**
+	 * @brief 获取钱包组件
+	 * @param Actor 含有该组件的角色
+	 * @return 钱包组件
+	 */
 	UFUNCTION(BlueprintPure, Category = "Shop Subsystem")
 	static UWalletActorComponent* FindWalletActorComponent(const AActor* Actor) { return (Actor ? Actor->FindComponentByClass<UWalletActorComponent>() : nullptr); }
 
+	/**
+	 * @brief 获取
+	 * @param Actor 拥有背包管理组件的角色
+	 * @return 背包管理组件
+	 */
 	UFUNCTION(BlueprintPure, Category = "Shop Subsystem")
 	static UInventoryManagerActorComponent* FindInventoryManagerActorComponent(const AActor* Actor)
 	{
@@ -95,7 +138,9 @@ public:
 	}
 
 protected:
-	//缓存配置表指针
+	/**
+	 * @brief 缓存配置表指针
+	 */
 	UPROPERTY()
 	UDataTable* SlotTablePtr;
 
@@ -111,7 +156,9 @@ protected:
 	UPROPERTY()
 	UDataTable* QuickBarTablePtr;
 private:
-	//缓存数据
+	/**
+	 * @brief 缓存数据
+	 */
 	TArray<FItemTable*> CacheSlotTables;
 
 	/**
@@ -124,6 +171,8 @@ private:
 	 */
 	TArray<FQuickBarConfiguration*> QuickBarConfigurations;
 
-	//交易监听句柄
+	/**
+	 * @brief 交易监听句柄
+	 */
 	FCH_GameplayMessageListenerHandle TransactionListenerHandle;
 };

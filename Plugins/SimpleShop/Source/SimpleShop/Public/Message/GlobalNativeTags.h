@@ -6,14 +6,18 @@
 #include "NativeGameplayTags.h"
 #include "GlobalNativeTags.generated.h"
 
+//声明插件日志的类别
+DECLARE_LOG_CATEGORY_EXTERN(LogSimpleShop,Log,All);
 
-//所有物品
+//////////物品目录的标签声明///////////////
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_All);//所有类型
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_Basic);//基础
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_Epic);//史诗
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_Legendary);//传奇
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_Mythic);//神话
-//辅助品
-UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_AuxiliaryProps);
+
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_Consumables);//消耗品
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_AuxiliaryProps);//辅助品
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_PhysicalAttack);//物理攻击
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_MagicAttack);//魔法攻击
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_PhysicalPenetration);//物理穿透
@@ -22,35 +26,42 @@ UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_Crit);//暴击
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_Armor);//护甲
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_MagicResistance);//魔法抗性
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_AttackSpeed);//攻击速度
-UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_Shoes);//鞋子
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_Shoes);//鞋类
 
 //可合成的物品
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_Compoundable);
 
-//合成物品
+//////////////消息标签///////////////
+//合成物品消息
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Message_Compound);
-
+//背包目录被点击的消息
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Inventory_CategoryOnClick_Message);
+//背包扩展消息
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Inventory_Expanded_Message);
+//背包目录消息
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Inventory_Category_Message);
+//商店目录消息
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Shop_Category_Message);
+//商店目录被点击的消息
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Shop_CategoryOnClick_Message);
+//背包重量消息
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Inventory_Gravity_Message);
+//最大背包承重消息
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Inventory_MaxGravity_Message);
-UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_All);
 
-//物品数量
+//背包物品数量
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Inventory_Item_Count);
+//确认交易消息
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_ConfirmedTransaction_Message);
+//交易消息
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Transaction_Message);
+//交易消息结果
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Transaction_Message_Result);
-
-UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_Consumables);//消耗品
 
 //金钱发生改变时发消息通知
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Wallet_Message_GoldChanged);
 
-//物品发生改变时发消息通知
+//背包物品数量发生改变时发消息通知
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Inventory_Message_StackChanged);
 
 //快捷栏消息标签

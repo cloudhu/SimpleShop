@@ -7,7 +7,7 @@
 
 UShopSubsystem::UShopSubsystem()
 {
-	//读取配置表 0.商品
+	//读取配置表 0.商品 DataTable'/SimpleShop/Data/DT_ShopItems.DT_ShopItems'
 	static ConstructorHelpers::FObjectFinder<UDataTable> Slot_Table(TEXT("/SimpleShop/Data/DT_ShopItems"));
 	SlotTablePtr = Slot_Table.Object;
 
@@ -22,6 +22,7 @@ UShopSubsystem::UShopSubsystem()
 
 UShopSubsystem& UShopSubsystem::Get(const UObject* WorldContextObject)
 {
+	//标准的游戏实例子系统的单例获取方法范例
 	const UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::Assert);
 	check(World);
 	UShopSubsystem* Router = UGameInstance::GetSubsystem<UShopSubsystem>(World->GetGameInstance());
@@ -29,25 +30,27 @@ UShopSubsystem& UShopSubsystem::Get(const UObject* WorldContextObject)
 	return *Router;
 }
 
-//Debug
+//Debug的时候用该命令来防止IDE做代码优化,从而无法查看调试信息
 //PRAGMA_DISABLE_OPTIMIZATION
 void UShopSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
+	//缓存物品数据
 	GetSlotTablesTemplate();
-
+	//日志记录
+	UE_LOG(LogSimpleShop,Log,TEXT("UShopSubsystem已经初始化"));
 	// 监听交易消息
 	UCH_GameplayMessageSubsystem& MessageSystem = UCH_GameplayMessageSubsystem::Get(GetWorld());
 	TransactionListenerHandle = MessageSystem.RegisterListener(TAG_ConfirmedTransaction_Message, this, &ThisClass::OnNotificationTransactionMessage);
 }
-
 //PRAGMA_ENABLE_OPTIMIZATION
 
 const TArray<FItemTable*>* UShopSubsystem::GetSlotTablesTemplate()
 {
+	//首先判断有没有缓存数据,如果有则直接返回缓存的数据,避免重复读取
 	if (!CacheSlotTables.Num())
 	{
-		if (SlotTablePtr)
+		if (SlotTablePtr)//没有缓存数据则从数据表指针中读取到缓存数据中
 		{
 			SlotTablePtr->GetAllRows(TEXT("Slot Tables"), CacheSlotTables);
 		}
@@ -84,6 +87,7 @@ const TArray<FQuickBarConfiguration*>* UShopSubsystem::GetQuickBarConfigurations
 
 const FItemTable* UShopSubsystem::GetSlotTableByID(const int32 InID)
 {
+	//遍历物品数据,找到对应编号的物品数据
 	for (auto& Tmp : *GetSlotTablesTemplate())
 	{
 		if (Tmp->ID == InID)

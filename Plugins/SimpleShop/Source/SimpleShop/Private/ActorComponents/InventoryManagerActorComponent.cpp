@@ -75,21 +75,25 @@ UItemInstance* UInventoryManagerActorComponent::AddItemDefinition(const TSubclas
 	UItemInstance* Result = nullptr;
 	if (ItemClass != nullptr && CanAddItemDefinition(ItemClass, StackCount))
 	{
+		//获取物品类的默认对象CDO
 		if (const UObject* Obj = GetDefault<UObject>(ItemClass))
 		{
 			//0.获取物品标签,将物品添加的类目中
 			TArray<FGameplayTag> ItemGameplayTags;
 			int32 OverlyingCount = 0;
 			float ItemGravity = 0.f;
+			//如果是C++实现,则可以直接将其Cast转化成接口
 			if (const IItemDefinitionInterface* ItemDef = Cast<IItemDefinitionInterface>(Obj))
 			{
+				//C++实现了接口,这里直接调用
 				ItemDef->Execute_GetTypeTags(Obj).GetGameplayTagArray(ItemGameplayTags);
 				//1.获取物品可叠加的数量
 				OverlyingCount = ItemDef->Execute_GetOverlyingAmount(Obj);
 				ItemGravity = ItemDef->Execute_GetGravity(Obj);
-			}
+			}//否则就需要判断其是否为蓝图实现
 			else if (Obj->Implements<UItemDefinitionInterface>())
 			{
+				//使用接口的静态方法来调用接口函数
 				IItemDefinitionInterface::GetTypeTags(Obj).GetGameplayTagArray(ItemGameplayTags);
 				//1.获取物品可叠加的数量
 				OverlyingCount = IItemDefinitionInterface::GetOverlyingAmount(Obj);

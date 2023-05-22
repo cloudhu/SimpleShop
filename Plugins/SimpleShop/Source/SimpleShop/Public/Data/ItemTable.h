@@ -1,10 +1,9 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// Copyright CloudHu. All Rights Reserved.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
-//#include "Definition/ItemDefinition.h"
 #include "Interface/ItemDefinitionInterface.h"
 #include "ItemTable.generated.h"
 
@@ -16,11 +15,15 @@ struct FItemTable : public FTableRowBase
 
 public:
 	FItemTable();
-	//编号
+	/**
+	 * @brief 编号
+	 */
 	UPROPERTY(EditDefaultsOnly, Category = "Slot")
 	int32 ID;
 
-	//价格
+	/**
+	 * @brief 价格
+	 */
 	UPROPERTY(EditDefaultsOnly, Category = "Slot")
 	int32 Price;
 
@@ -30,13 +33,28 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Slot")
 	int32 Stock;
 
-	//MustImplement任意实现ItemDefinitionInterface接口的对象都可以作为物品交易
+	/**
+	 * @brief meta元数据MustImplement修饰任意实现ItemDefinitionInterface接口的对象都可以作为物品交易
+	 */
 	UPROPERTY(EditDefaultsOnly, Category = Slot, meta = (MustImplement = "ItemDefinitionInterface"))
 	TSubclassOf<UObject> ItemDefinition;
 public:
+	/**
+	 * @brief 是否是有效物品
+	 * @return true有效,false无效
+	 */
 	bool IsValid() const;
 
+	/**
+	 * @brief 是否是消耗品
+	 * @return true是,false否
+	 */
 	bool IsConsumables() const;
 
+	/**
+	 * @brief 该物品类型是否拥有指定的标签
+	 * @param Tag 标签
+	 * @return true是,false否
+	 */
 	bool ItemTypeHasTag(const FGameplayTag& Tag) const;
 };

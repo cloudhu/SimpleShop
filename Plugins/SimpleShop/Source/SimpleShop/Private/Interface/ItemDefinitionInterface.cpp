@@ -1,6 +1,7 @@
 // Copyright CloudHu. All Rights Reserved.
 #include "Interface/ItemDefinitionInterface.h"
-// Add default functionality here for any IItemDefinitionInterface functions that are not pure virtual.
+
+// 以下是针对蓝图实现接口函数的调用实现
 FGameplayTagContainer IItemDefinitionInterface::GetTypeTags(const UObject* Src)
 {
 	return Execute_GetTypeTags(Src);
