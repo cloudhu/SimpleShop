@@ -53,18 +53,22 @@ void UShopActorComponent::ConfirmAction(const int32 Count) const
 	ConfirmedMessage.ItemID = CacheNotification.ItemID;
 	ConfirmedMessage.bIsQuickBarItem = CacheNotification.bIsQuickBarItem;
 	ConfirmedMessage.bIsCompoundItem = CacheNotification.bIsCompoundItem;
-	UCH_GameplayMessageSubsystem& MessageSystem = UCH_GameplayMessageSubsystem::Get(GetWorld());
+	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 	MessageSystem.BroadcastMessage(TAG_ConfirmedTransaction_Message, ConfirmedMessage);
 }
 
 void UShopActorComponent::CancelAction() const
 {
+	//0.声明消息结构体
 	FTransactionMessageResult ResultMessage;
+	//1.填写消息内容
 	ResultMessage.Buyer = CacheNotification.Buyer;
 	ResultMessage.Seller = CacheNotification.Seller;
 	ResultMessage.ItemID = CacheNotification.ItemID;
 	ResultMessage.bSuccess = false;
-	UCH_GameplayMessageSubsystem& MessageSystem = UCH_GameplayMessageSubsystem::Get(GetWorld());
+	//2.获取游戏消息子系统的单例
+	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
+	//3.广播消息
 	MessageSystem.BroadcastMessage(TAG_Transaction_Message_Result, ResultMessage);
 }
 
@@ -101,7 +105,7 @@ void UShopActorComponent::BeginPlay()
 	}
 
 	// 监听交易消息
-	UCH_GameplayMessageSubsystem& MessageSystem = UCH_GameplayMessageSubsystem::Get(GetWorld());
+	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 	TransactionListenerHandle = MessageSystem.RegisterListener(TAG_Transaction_Message, this, &ThisClass::OnNotificationTransactionMessage);
 }
 

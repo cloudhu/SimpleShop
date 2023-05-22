@@ -71,10 +71,10 @@ private:
 	/**
 	 * @brief 监听单独的格子发生变化
 	 */
-	FCH_GameplayMessageListenerHandle OneSlotChangeHandle;
+	FGameplayMessageListenerHandle OneSlotChangeHandle;
 	
 	/**
 	 * @brief 激活的索引变化监听句柄
 	 */
-	FCH_GameplayMessageListenerHandle ActiveIndexChangeHandle;
+	FGameplayMessageListenerHandle ActiveIndexChangeHandle;
 };

@@ -5,7 +5,6 @@
 #include "Definition/ItemCategory.h"
 #include "Net/UnrealNetwork.h"
 #include "Engine/ActorChannel.h"
-#include "GameFramework/CH_GameplayMessageSubsystem.h"
 #include "Interface/ItemDefinitionInterface.h"
 #include "Message/UserInterfaceMessage.h"
 #include "Message/GlobalNativeTags.h"
@@ -339,7 +338,7 @@ void UInventoryManagerActorComponent::BroadcastCategoryMessage(const FGameplayTa
 	Message.NewNum = NewCount;
 	Message.Delta = NewCount - OldCount;
 
-	UCH_GameplayMessageSubsystem& MessageSystem = UCH_GameplayMessageSubsystem::Get(GetWorld());
+	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 	MessageSystem.BroadcastMessage(TAG_Inventory_Category_Message, Message);
 	if (Message.NewNum == 0) //删除
 	{
@@ -353,7 +352,7 @@ void UInventoryManagerActorComponent::BroadcastDeltaMessage(const FGameplayTag& 
 	Message.InventoryOwner = GetOwner<APawn>();
 	Message.Delta = Delta;
 	Message.DeltaFloat = DeltaFloat;
-	UCH_GameplayMessageSubsystem& MessageSystem = UCH_GameplayMessageSubsystem::Get(GetWorld());
+	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 	MessageSystem.BroadcastMessage(InTag, Message);
 }
 

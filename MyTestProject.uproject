@@ -24,6 +24,10 @@
 		{
 			"Name": "SimpleShop",
 			"Enabled": true
+		},
+		{
+			"Name": "GameplayMessageRouter",
+			"Enabled": true
 		}
 	]
 }

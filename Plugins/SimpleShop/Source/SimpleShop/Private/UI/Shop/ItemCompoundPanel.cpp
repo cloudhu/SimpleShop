@@ -78,7 +78,7 @@ void UItemCompoundPanel::NativeConstruct()
 {
 	Super::NativeConstruct();
 	//监听钱包发出的货币变更消息
-	UCH_GameplayMessageSubsystem& MessageSystem = UCH_GameplayMessageSubsystem::Get(GetWorld());
+	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 	ListenerHandle = MessageSystem.RegisterListener(TAG_Item_Message_Compound, this, &ThisClass::OnNotificationCompoundMessage);
 }
 

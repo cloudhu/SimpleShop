@@ -42,5 +42,5 @@ protected:
 
 private:
 	//监听句柄
-	FCH_GameplayMessageListenerHandle ListenerHandle;
+	FGameplayMessageListenerHandle ListenerHandle;
 };

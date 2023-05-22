@@ -18,7 +18,7 @@ void UUW_InventoryPanel::NativeConstruct()
 {
 	Super::NativeConstruct();
 	//消息监听
-	UCH_GameplayMessageSubsystem& MessageSystem = UCH_GameplayMessageSubsystem::Get(GetWorld());
+	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 	CategoryClickedListenerHandle = MessageSystem.RegisterListener(TAG_Inventory_CategoryOnClick_Message, this, &ThisClass::OnCategoryClickMessage);
 	CategoryUpdateListenerHandle = MessageSystem.RegisterListener(TAG_Inventory_Category_Message, this, &ThisClass::OnCategoryChangeMessage);
 	WalletListenerHandle = MessageSystem.RegisterListener(TAG_Wallet_Message_GoldChanged, this, &ThisClass::OnWalletChangeMessage);

@@ -1,14 +1,9 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 #include "ActorComponents/QuickBarComponent.h"
 #include "NativeGameplayTags.h"
-
 #include "ActorComponents/InventoryManagerActorComponent.h"
-
 #include "Blueprint/UserWidget.h"
-
 #include "Core/ShopSubsystem.h"
-
-#include "GameFramework/CH_GameplayMessageSubsystem.h"
 #include "Net/UnrealNetwork.h"
 #include "Definition/ItemInstance.h"
 #include "Message/GlobalNativeTags.h"
@@ -71,7 +66,7 @@ void UQuickBarComponent::SendEquipItemMessage(const UItemInstance* SlotItem, con
 		Message.bEquip = bEquip;
 		Message.ItemDef = SlotItem->GetItemDef();
 		Message.Guid = SlotItem->GetGuid();
-		UCH_GameplayMessageSubsystem& MessageSystem = UCH_GameplayMessageSubsystem::Get(this);
+		UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(this);
 		MessageSystem.BroadcastMessage(TAG_QuickBar_Message_EquipChanged, Message);
 	}
 }
@@ -107,7 +102,7 @@ void UQuickBarComponent::OnSlotChanged(UItemInstance* SlotItem) const
 	Message.Owner = GetOwner<APawn>();
 	Message.SlotInstance = SlotItem;
 
-	UCH_GameplayMessageSubsystem& MessageSystem = UCH_GameplayMessageSubsystem::Get(GetWorld());
+	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 	MessageSystem.BroadcastMessage(TAG_QuickBar_Message_OneSlotChanged, Message);
 }
 
@@ -312,7 +307,7 @@ void UQuickBarComponent::OnRep_Slots() const
 	Message.Owner = GetOwner<APawn>();
 	Message.Slots = Slots;
 
-	UCH_GameplayMessageSubsystem& MessageSystem = UCH_GameplayMessageSubsystem::Get(GetWorld());
+	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 	MessageSystem.BroadcastMessage(TAG_QuickBar_Message_SlotsChanged, Message);
 }
 
@@ -322,6 +317,6 @@ void UQuickBarComponent::OnRep_ActiveSlotIndex() const
 	Message.Owner = GetOwner<APawn>();
 	Message.ActiveIndex = ActiveSlotIndex;
 
-	UCH_GameplayMessageSubsystem& MessageSystem = UCH_GameplayMessageSubsystem::Get(GetWorld());
+	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 	MessageSystem.BroadcastMessage(TAG_QuickBar_Message_ActiveIndexChanged, Message);
 }

@@ -64,7 +64,7 @@ private:
 	APawn* ShopOwner = nullptr;
 
 	//监听句柄
-	FCH_GameplayMessageListenerHandle ListenerHandle;
+	FGameplayMessageListenerHandle ListenerHandle;
 
 	/** 目录标签  */
 	UPROPERTY()

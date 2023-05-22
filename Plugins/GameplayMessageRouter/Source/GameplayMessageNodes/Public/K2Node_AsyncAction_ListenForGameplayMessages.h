@@ -5,17 +5,17 @@
 #include "BlueprintGraph/Classes/K2Node_AsyncAction.h"
 #include "CoreMinimal.h"
 #include "UObject/ObjectMacros.h"
-#include "K2Node_AsyncAction_ListenForGameplayMessagesCH.generated.h"
+
+#include "K2Node_AsyncAction_ListenForGameplayMessages.generated.h"
 
 class FBlueprintActionDatabaseRegistrar;
 
 /**
- * Blueprint node which is spawned to handle the async logic for UCH_AsyncAction_RegisterGameplayMessageReceiver
- * 这是从Lyra消息插件GameplayMessageRouter提取出来的,目标是将整个插件完全独立解耦出来
+ * Blueprint node which is spawned to handle the async logic for UAsyncAction_RegisterGameplayMessageReceiver
  */
 
 UCLASS()
-class UK2Node_AsyncAction_CHListenForGameplayMessages : public UK2Node_AsyncAction
+class UK2Node_AsyncAction_ListenForGameplayMessages : public UK2Node_AsyncAction
 {
 	GENERATED_BODY()
 

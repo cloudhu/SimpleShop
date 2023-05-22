@@ -1,27 +1,27 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "GameFramework/CH_GameplayMessageSubsystem.h"
+#include "GameFramework/GameplayMessageSubsystem.h"
 #include "Engine/Engine.h"
 
-DEFINE_LOG_CATEGORY(LogCH_GameplayMessageSubsystem);
+DEFINE_LOG_CATEGORY(LogGameplayMessageSubsystem);
 
 namespace UE
 {
-	namespace CH_GameplayMessageSubsystem
+	namespace GameplayMessageSubsystem
 	{
 		static int32 ShouldLogMessages = 0;
-		static FAutoConsoleVariableRef CVarShouldLogMessages(TEXT("CH_GameplayMessageSubsystem.LogMessages"),
+		static FAutoConsoleVariableRef CVarShouldLogMessages(TEXT("GameplayMessageSubsystem.LogMessages"),
 			ShouldLogMessages,
 			TEXT("Should messages broadcast through the gameplay message subsystem be logged?"));
 	}
 }
 
 //////////////////////////////////////////////////////////////////////
-// FCH_GameplayMessageListenerHandle
+// FGameplayMessageListenerHandle
 
-void FCH_GameplayMessageListenerHandle::Unregister()
+void FGameplayMessageListenerHandle::Unregister()
 {
-	if (UCH_GameplayMessageSubsystem* StrongSubsystem = Subsystem.Get())
+	if (UGameplayMessageSubsystem* StrongSubsystem = Subsystem.Get())
 	{
 		StrongSubsystem->UnregisterListener(*this);
 		Subsystem.Reset();
@@ -31,35 +31,35 @@ void FCH_GameplayMessageListenerHandle::Unregister()
 }
 
 //////////////////////////////////////////////////////////////////////
-// UCH_GameplayMessageSubsystem
+// UGameplayMessageSubsystem
 
-UCH_GameplayMessageSubsystem& UCH_GameplayMessageSubsystem::Get(const UObject* WorldContextObject)
+UGameplayMessageSubsystem& UGameplayMessageSubsystem::Get(const UObject* WorldContextObject)
 {
 	UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::Assert);
 	check(World);
-	UCH_GameplayMessageSubsystem* Router = UGameInstance::GetSubsystem<UCH_GameplayMessageSubsystem>(World->GetGameInstance());
+	UGameplayMessageSubsystem* Router = UGameInstance::GetSubsystem<UGameplayMessageSubsystem>(World->GetGameInstance());
 	check(Router);
 	return *Router;
 }
 
-bool UCH_GameplayMessageSubsystem::HasInstance(const UObject* WorldContextObject)
+bool UGameplayMessageSubsystem::HasInstance(const UObject* WorldContextObject)
 {
 	UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::Assert);
-	UCH_GameplayMessageSubsystem* Router = World != nullptr ? UGameInstance::GetSubsystem<UCH_GameplayMessageSubsystem>(World->GetGameInstance()) : nullptr;
+	UGameplayMessageSubsystem* Router = World != nullptr ? UGameInstance::GetSubsystem<UGameplayMessageSubsystem>(World->GetGameInstance()) : nullptr;
 	return Router != nullptr;
 }
 
-void UCH_GameplayMessageSubsystem::Deinitialize()
+void UGameplayMessageSubsystem::Deinitialize()
 {
 	ListenerMap.Reset();
 
 	Super::Deinitialize();
 }
 
-void UCH_GameplayMessageSubsystem::BroadcastMessageInternal(FGameplayTag Channel, const UScriptStruct* StructType, const void* MessageBytes)
+void UGameplayMessageSubsystem::BroadcastMessageInternal(FGameplayTag Channel, const UScriptStruct* StructType, const void* MessageBytes)
 {
 	// Log the message if enabled
-	if (UE::CH_GameplayMessageSubsystem::ShouldLogMessages != 0)
+	if (UE::GameplayMessageSubsystem::ShouldLogMessages != 0)
 	{
 		FString* pContextString = nullptr;
 #if WITH_EDITOR
@@ -72,7 +72,7 @@ void UCH_GameplayMessageSubsystem::BroadcastMessageInternal(FGameplayTag Channel
 
 		FString HumanReadableMessage;
 		StructType->ExportText(/*out*/ HumanReadableMessage, MessageBytes, /*Defaults=*/ nullptr, /*OwnerObject=*/ nullptr, PPF_None, /*ExportRootScope=*/ nullptr);
-		UE_LOG(LogCH_GameplayMessageSubsystem, Log, TEXT("BroadcastMessage(%s, %s, %s)"), pContextString ? **pContextString : *GetPathNameSafe(this), *Channel.ToString(), *HumanReadableMessage);
+		UE_LOG(LogGameplayMessageSubsystem, Log, TEXT("BroadcastMessage(%s, %s, %s)"), pContextString ? **pContextString : *GetPathNameSafe(this), *Channel.ToString(), *HumanReadableMessage);
 	}
 
 	// Broadcast the message
@@ -82,15 +82,15 @@ void UCH_GameplayMessageSubsystem::BroadcastMessageInternal(FGameplayTag Channel
 		if (const FChannelListenerList* pList = ListenerMap.Find(Tag))
 		{
 			// Copy in case there are removals while handling callbacks
-			TArray<FCH_GameplayMessageListenerData> ListenerArray(pList->Listeners);
+			TArray<FGameplayMessageListenerData> ListenerArray(pList->Listeners);
 
-			for (const FCH_GameplayMessageListenerData& Listener : ListenerArray)
+			for (const FGameplayMessageListenerData& Listener : ListenerArray)
 			{
-				if (bOnInitialTag || (Listener.MatchType == ECH_GameplayMessageMatch::PartialMatch))
+				if (bOnInitialTag || (Listener.MatchType == EGameplayMessageMatch::PartialMatch))
 				{
 					if (Listener.bHadValidType && !Listener.ListenerStructType.IsValid())
 					{
-						UE_LOG(LogCH_GameplayMessageSubsystem, Warning, TEXT("Listener struct type has gone invalid on Channel %s. Removing listener from list"), *Channel.ToString());
+						UE_LOG(LogGameplayMessageSubsystem, Warning, TEXT("Listener struct type has gone invalid on Channel %s. Removing listener from list"), *Channel.ToString());
 						UnregisterListenerInternal(Channel, Listener.HandleID);
 						continue;
 					}
@@ -102,7 +102,7 @@ void UCH_GameplayMessageSubsystem::BroadcastMessageInternal(FGameplayTag Channel
 					}
 					else
 					{
-						UE_LOG(LogCH_GameplayMessageSubsystem, Error, TEXT("Struct type mismatch on channel %s (broadcast type %s, listener at %s was expecting type %s)"),
+						UE_LOG(LogGameplayMessageSubsystem, Error, TEXT("Struct type mismatch on channel %s (broadcast type %s, listener at %s was expecting type %s)"),
 							*Channel.ToString(),
 							*StructType->GetPathName(),
 							*Tag.ToString(),
@@ -115,13 +115,13 @@ void UCH_GameplayMessageSubsystem::BroadcastMessageInternal(FGameplayTag Channel
 	}
 }
 
-void UCH_GameplayMessageSubsystem::K2_BroadcastMessage(FGameplayTag Channel, const int32& Message)
+void UGameplayMessageSubsystem::K2_BroadcastMessage(FGameplayTag Channel, const int32& Message)
 {
 	// This will never be called, the exec version below will be hit instead
 	checkNoEntry();
 }
 
-DEFINE_FUNCTION(UCH_GameplayMessageSubsystem::execK2_BroadcastMessage)
+DEFINE_FUNCTION(UGameplayMessageSubsystem::execK2_BroadcastMessage)
 {
 	P_GET_STRUCT(FGameplayTag, Channel);
 
@@ -138,21 +138,21 @@ DEFINE_FUNCTION(UCH_GameplayMessageSubsystem::execK2_BroadcastMessage)
 	}
 }
 
-FCH_GameplayMessageListenerHandle UCH_GameplayMessageSubsystem::RegisterListenerInternal(FGameplayTag Channel, TFunction<void(FGameplayTag, const UScriptStruct*, const void*)>&& Callback, const UScriptStruct* StructType, ECH_GameplayMessageMatch MatchType)
+FGameplayMessageListenerHandle UGameplayMessageSubsystem::RegisterListenerInternal(FGameplayTag Channel, TFunction<void(FGameplayTag, const UScriptStruct*, const void*)>&& Callback, const UScriptStruct* StructType, EGameplayMessageMatch MatchType)
 {
 	FChannelListenerList& List = ListenerMap.FindOrAdd(Channel);
 
-	FCH_GameplayMessageListenerData& Entry = List.Listeners.AddDefaulted_GetRef();
+	FGameplayMessageListenerData& Entry = List.Listeners.AddDefaulted_GetRef();
 	Entry.ReceivedCallback = MoveTemp(Callback);
 	Entry.ListenerStructType = StructType;
 	Entry.bHadValidType = StructType != nullptr;
 	Entry.HandleID = ++List.HandleID;
 	Entry.MatchType = MatchType;
 
-	return FCH_GameplayMessageListenerHandle(this, Channel, Entry.HandleID);
+	return FGameplayMessageListenerHandle(this, Channel, Entry.HandleID);
 }
 
-void UCH_GameplayMessageSubsystem::UnregisterListener(FCH_GameplayMessageListenerHandle Handle)
+void UGameplayMessageSubsystem::UnregisterListener(FGameplayMessageListenerHandle Handle)
 {
 	if (Handle.IsValid())
 	{
@@ -162,15 +162,15 @@ void UCH_GameplayMessageSubsystem::UnregisterListener(FCH_GameplayMessageListene
 	}
 	else
 	{
-		UE_LOG(LogCH_GameplayMessageSubsystem, Warning, TEXT("Trying to unregister an invalid Handle."));
+		UE_LOG(LogGameplayMessageSubsystem, Warning, TEXT("Trying to unregister an invalid Handle."));
 	}
 }
 
-void UCH_GameplayMessageSubsystem::UnregisterListenerInternal(FGameplayTag Channel, int32 HandleID)
+void UGameplayMessageSubsystem::UnregisterListenerInternal(FGameplayTag Channel, int32 HandleID)
 {
 	if (FChannelListenerList* pList = ListenerMap.Find(Channel))
 	{
-		int32 MatchIndex = pList->Listeners.IndexOfByPredicate([ID = HandleID](const FCH_GameplayMessageListenerData& Other) { return Other.HandleID == ID; });
+		int32 MatchIndex = pList->Listeners.IndexOfByPredicate([ID = HandleID](const FGameplayMessageListenerData& Other) { return Other.HandleID == ID; });
 		if (MatchIndex != INDEX_NONE)
 		{
 			pList->Listeners.RemoveAtSwap(MatchIndex);

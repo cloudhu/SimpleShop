@@ -5,11 +5,11 @@
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "Data/ItemTable.h"
-#include "GameFramework/CH_GameplayMessageSubsystem.h"
 #include "GameplayTagContainer.h"
 #include "ActorComponents/InventoryManagerActorComponent.h"
 #include "ActorComponents/WalletActorComponent.h"
 #include "Data/ShopTypes.h"
+#include "GameFramework/GameplayMessageSubsystem.h"
 #include "Message/TransactionMessage.h"
 #include "ShopSubsystem.generated.h"
 
@@ -174,5 +174,5 @@ private:
 	/**
 	 * @brief 交易监听句柄
 	 */
-	FCH_GameplayMessageListenerHandle TransactionListenerHandle;
+	FGameplayMessageListenerHandle TransactionListenerHandle;
 };

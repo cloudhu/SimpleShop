@@ -1,10 +1,10 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "GameFramework/AsyncAction_CHListenForGameplayMessage.h"
+#include "GameFramework/AsyncAction_ListenForGameplayMessage.h"
 #include "Engine/Engine.h"
-#include "GameFramework/CH_GameplayMessageSubsystem.h"
+#include "GameFramework/GameplayMessageSubsystem.h"
 
-UAsyncAction_CHListenForGameplayMessage* UAsyncAction_CHListenForGameplayMessage::ListenForGameplayMessages(UObject* WorldContextObject, FGameplayTag Channel, UScriptStruct* PayloadType, ECH_GameplayMessageMatch MatchType)
+UAsyncAction_ListenForGameplayMessage* UAsyncAction_ListenForGameplayMessage::ListenForGameplayMessages(UObject* WorldContextObject, FGameplayTag Channel, UScriptStruct* PayloadType, EGameplayMessageMatch MatchType)
 {
 	UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
 	if (!World)
@@ -12,7 +12,7 @@ UAsyncAction_CHListenForGameplayMessage* UAsyncAction_CHListenForGameplayMessage
 		return nullptr;
 	}
 
-	UAsyncAction_CHListenForGameplayMessage* Action = NewObject<UAsyncAction_CHListenForGameplayMessage>();
+	UAsyncAction_ListenForGameplayMessage* Action = NewObject<UAsyncAction_ListenForGameplayMessage>();
 	Action->WorldPtr = World;
 	Action->ChannelToRegister = Channel;
 	Action->MessageStructType = PayloadType;
@@ -22,19 +22,19 @@ UAsyncAction_CHListenForGameplayMessage* UAsyncAction_CHListenForGameplayMessage
 	return Action;
 }
 
-void UAsyncAction_CHListenForGameplayMessage::Activate()
+void UAsyncAction_ListenForGameplayMessage::Activate()
 {
 	if (UWorld* World = WorldPtr.Get())
 	{
-		if (UCH_GameplayMessageSubsystem::HasInstance(World))
+		if (UGameplayMessageSubsystem::HasInstance(World))
 		{
-			UCH_GameplayMessageSubsystem& Router = UCH_GameplayMessageSubsystem::Get(World);
+			UGameplayMessageSubsystem& Router = UGameplayMessageSubsystem::Get(World);
 
-			TWeakObjectPtr<UAsyncAction_CHListenForGameplayMessage> WeakThis(this);
+			TWeakObjectPtr<UAsyncAction_ListenForGameplayMessage> WeakThis(this);
 			ListenerHandle = Router.RegisterListenerInternal(ChannelToRegister,
 				[WeakThis](FGameplayTag Channel, const UScriptStruct* StructType, const void* Payload)
 				{
-					if (UAsyncAction_CHListenForGameplayMessage* StrongThis = WeakThis.Get())
+					if (UAsyncAction_ListenForGameplayMessage* StrongThis = WeakThis.Get())
 					{
 						StrongThis->HandleMessageReceived(Channel, StructType, Payload);
 					}
@@ -49,20 +49,20 @@ void UAsyncAction_CHListenForGameplayMessage::Activate()
 	SetReadyToDestroy();
 }
 
-void UAsyncAction_CHListenForGameplayMessage::SetReadyToDestroy()
+void UAsyncAction_ListenForGameplayMessage::SetReadyToDestroy()
 {
 	ListenerHandle.Unregister();
 
 	Super::SetReadyToDestroy();
 }
 
-bool UAsyncAction_CHListenForGameplayMessage::GetPayload(int32& OutPayload)
+bool UAsyncAction_ListenForGameplayMessage::GetPayload(int32& OutPayload)
 {
 	checkNoEntry();
 	return false;
 }
 
-DEFINE_FUNCTION(UAsyncAction_CHListenForGameplayMessage::execGetPayload)
+DEFINE_FUNCTION(UAsyncAction_ListenForGameplayMessage::execGetPayload)
 {
 	Stack.MostRecentPropertyAddress = nullptr;
 	Stack.StepCompiledIn<FStructProperty>(nullptr);
@@ -82,7 +82,7 @@ DEFINE_FUNCTION(UAsyncAction_CHListenForGameplayMessage::execGetPayload)
 	*(bool*)RESULT_PARAM = bSuccess;
 }
 
-void UAsyncAction_CHListenForGameplayMessage::HandleMessageReceived(FGameplayTag Channel, const UScriptStruct* StructType, const void* Payload)
+void UAsyncAction_ListenForGameplayMessage::HandleMessageReceived(FGameplayTag Channel, const UScriptStruct* StructType, const void* Payload)
 {
 	if (!MessageStructType.Get() || (MessageStructType.Get() == StructType))
 	{

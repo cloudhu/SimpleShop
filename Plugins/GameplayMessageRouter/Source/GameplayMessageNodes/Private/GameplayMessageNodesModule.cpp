@@ -3,4 +3,4 @@
 #include "Modules/ModuleInterface.h"
 #include "Modules/ModuleManager.h"
 
-IMPLEMENT_MODULE(FDefaultModuleImpl, CloudGameplayMessageNodes);
+IMPLEMENT_MODULE(FDefaultModuleImpl, GameplayMessageNodes);

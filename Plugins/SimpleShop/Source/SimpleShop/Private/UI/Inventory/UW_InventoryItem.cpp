@@ -30,7 +30,7 @@ void UUW_InventoryItem::OnItemStackChanged(FGameplayTag Chanel, const FInventory
 void UUW_InventoryItem::NativeConstruct()
 {
 	Super::NativeConstruct();
-	UCH_GameplayMessageSubsystem& MessageSubsystem = UCH_GameplayMessageSubsystem::Get(GetWorld());
+	UGameplayMessageSubsystem& MessageSubsystem = UGameplayMessageSubsystem::Get(GetWorld());
 	ListenerHandle = MessageSubsystem.RegisterListener(TAG_Inventory_Message_StackChanged, this, &ThisClass::OnItemStackChanged);
 }
 

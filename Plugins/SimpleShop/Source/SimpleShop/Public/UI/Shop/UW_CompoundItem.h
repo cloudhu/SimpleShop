@@ -17,7 +17,7 @@ class SIMPLESHOP_API UUW_CompoundItem : public UUW_ItemSlotBase
 public:
 	UUW_CompoundItem(const FObjectInitializer& ObjectInitializer);
 
-	FCH_GameplayMessageListenerHandle WalletListenerHandle2;
+	FGameplayMessageListenerHandle WalletListenerHandle2;
 public:
 	/// <summary>
 	/// 商品被鼠标左键点击时是购买

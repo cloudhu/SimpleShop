@@ -8,7 +8,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/TextBlock.h"
 #include "Components/TileView.h"
-#include "GameFramework/CH_GameplayMessageSubsystem.h"
+#include "GameFramework/GameplayMessageSubsystem.h"
 #include "Message/GlobalNativeTags.h"
 #include "Message/TransactionMessage.h"
 #include "Message/UserInterfaceMessage.h"
@@ -158,37 +158,37 @@ private:
 	/**
 	 * @brief 目录点击消息监听句柄
 	 */
-	FCH_GameplayMessageListenerHandle CategoryClickedListenerHandle;
+	FGameplayMessageListenerHandle CategoryClickedListenerHandle;
 
 	/**
 	 * @brief 目录更新消息监听句柄
 	 */
-	FCH_GameplayMessageListenerHandle CategoryUpdateListenerHandle;
+	FGameplayMessageListenerHandle CategoryUpdateListenerHandle;
 	
 	/**
 	 * @brief 钱包监听句柄
 	 */
-	FCH_GameplayMessageListenerHandle WalletListenerHandle;
+	FGameplayMessageListenerHandle WalletListenerHandle;
 	
 	/**
 	 * @brief 当前背包负重监听
 	 */
-	FCH_GameplayMessageListenerHandle GravityListenerHandle;
+	FGameplayMessageListenerHandle GravityListenerHandle;
 
 	/**
 	 * @brief 当前背包负重监听
 	 */
-	FCH_GameplayMessageListenerHandle MaxGravityListenerHandle;
+	FGameplayMessageListenerHandle MaxGravityListenerHandle;
 
 	/**
 	 * @brief 当前背包扩容监听
 	 */
-	FCH_GameplayMessageListenerHandle ExpandListenerHandle;
+	FGameplayMessageListenerHandle ExpandListenerHandle;
 
 	/**
 	 * @brief 当前背包扩容监听
 	 */
-	//FCH_GameplayMessageListenerHandle ItemChangeListenerHandle;
+	//FGameplayMessageListenerHandle ItemChangeListenerHandle;
 
 	/**
 	 * @brief 缓存标签

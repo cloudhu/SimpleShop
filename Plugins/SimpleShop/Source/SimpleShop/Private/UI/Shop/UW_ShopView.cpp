@@ -26,7 +26,7 @@ void UUW_ShopView::NativeConstruct()
 {
 	Super::NativeConstruct();
 	// 监听目录点击消息
-	UCH_GameplayMessageSubsystem& MessageSystem = UCH_GameplayMessageSubsystem::Get(GetWorld());
+	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 	ListenerHandle = MessageSystem.RegisterListener(TAG_Shop_CategoryOnClick_Message, this, &ThisClass::OnCategoryClicked);
 
 	//获取ShopSubsystem商店子系统单例 Use ShopSubsystem
@@ -166,7 +166,7 @@ void UUW_ShopView::CloseCompoundPanel() const
 	FUserInterfaceMessage Message;
 	Message.Owner = GetOwningPlayerPawn();
 	Message.ItemID = INDEX_NONE; //收到INDEX_NONE时关闭面板
-	UCH_GameplayMessageSubsystem& MessageSystem = UCH_GameplayMessageSubsystem::Get(GetWorld());
+	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 	MessageSystem.BroadcastMessage(TAG_Item_Message_Compound, Message);
 }
 
@@ -181,7 +181,7 @@ void UUW_ShopView::BroadcastCategoryMessage(const FGameplayTag InTag, const int3
 	Message.NewNum = NewCount;
 	Message.Delta = NewCount - OldCount;
 
-	UCH_GameplayMessageSubsystem& MessageSystem = UCH_GameplayMessageSubsystem::Get(GetWorld());
+	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 	MessageSystem.BroadcastMessage(TAG_Shop_Category_Message, Message);
 
 	if (OldCount == 0) //新增

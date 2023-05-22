@@ -53,19 +53,27 @@ struct FTransactionMessageResult
 {
 	GENERATED_USTRUCT_BODY()
 
-	//买家
+	/**
+	 * @brief 买家
+	 */
 	UPROPERTY(BlueprintReadOnly, Category = Transaction)
 	const APawn* Buyer = nullptr;
 
-	//卖家
+	/**
+	 * @brief 卖家
+	 */
 	UPROPERTY(BlueprintReadOnly, Category = Transaction)
 	const APawn* Seller = nullptr;
 
-	//物品编号
+	/**
+	 * @brief 物品编号
+	 */
 	UPROPERTY(BlueprintReadOnly, Category = Transaction)
 	int32 ItemID = INDEX_NONE;
 
-	//是否购买成功
+	/**
+	 * @brief 是否购买成功
+	 */
 	UPROPERTY(BlueprintReadOnly, Category = Transaction)
 	bool bSuccess = false;
 

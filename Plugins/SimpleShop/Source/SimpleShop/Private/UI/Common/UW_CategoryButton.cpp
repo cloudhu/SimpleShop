@@ -11,7 +11,7 @@ UUW_CategoryButton::UUW_CategoryButton(const FObjectInitializer& ObjectInitializ
 void UUW_CategoryButton::OnWidgetClicked()
 {
 	Super::OnWidgetClicked();
-	UCH_GameplayMessageSubsystem& MessageSubsystem = UCH_GameplayMessageSubsystem::Get(GetWorld());
+	UGameplayMessageSubsystem& MessageSubsystem = UGameplayMessageSubsystem::Get(GetWorld());
 	FCategoryClickMessage Message;
 	Message.Character = GetOwningPlayerPawn();
 	Message.Tag = Tag;
@@ -23,7 +23,7 @@ void UUW_CategoryButton::BindCategory(const FGameplayTag InTag)
 {
 	Super::BindCategory(InTag);
 	// 监听词缀消息
-	UCH_GameplayMessageSubsystem& MessageSystem = UCH_GameplayMessageSubsystem::Get(GetWorld());
+	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 	ListenerHandle = MessageSystem.RegisterListener(TAG_Inventory_Category_Message, this, &ThisClass::OnNumberChangeMessage);
 	OnClickedListenerHandle = MessageSystem.RegisterListener(TAG_Inventory_CategoryOnClick_Message, this, &ThisClass::ResumeCategory);
 }

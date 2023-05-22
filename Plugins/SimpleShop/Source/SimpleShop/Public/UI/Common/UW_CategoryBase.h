@@ -6,7 +6,7 @@
 #include "GameplayTagContainer.h"
 #include "Blueprint/IUserObjectListEntry.h"
 #include "Blueprint/UserWidget.h"
-#include "GameFramework/CH_GameplayMessageSubsystem.h"
+#include "GameFramework/GameplayMessageSubsystem.h"
 #include "UW_CategoryBase.generated.h"
 
 struct FCategoryClickMessage;
@@ -60,9 +60,9 @@ public:
 	FGameplayTag Tag;
 
 	//监听句柄
-	FCH_GameplayMessageListenerHandle ListenerHandle;
+	FGameplayMessageListenerHandle ListenerHandle;
 
-	FCH_GameplayMessageListenerHandle OnClickedListenerHandle;
+	FGameplayMessageListenerHandle OnClickedListenerHandle;
 
 	UPROPERTY()
 	int32 CacheNum;

@@ -69,7 +69,7 @@ void UUW_QuickBarItem::NativeConstruct()
 	OnChosen->SetVisibility(ESlateVisibility::Hidden);
 
 	//注册监听消息
-	UCH_GameplayMessageSubsystem& MessageSubsystem = UCH_GameplayMessageSubsystem::Get(GetWorld());
+	UGameplayMessageSubsystem& MessageSubsystem = UGameplayMessageSubsystem::Get(GetWorld());
 	OneSlotChangeHandle = MessageSubsystem.RegisterListener(TAG_QuickBar_Message_OneSlotChanged, this, &ThisClass::OnNotificationSlotChangeMessage);
 
 	ActiveIndexChangeHandle = MessageSubsystem.RegisterListener(TAG_QuickBar_Message_ActiveIndexChanged, this, &ThisClass::OnNotificationActiveIndexChangeMessage);

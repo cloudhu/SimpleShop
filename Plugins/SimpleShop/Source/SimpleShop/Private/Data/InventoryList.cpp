@@ -4,7 +4,7 @@
 #include "Definition/ItemInstance.h"
 #include "Definition/ItemCategory.h"
 #include "Engine/ActorChannel.h"
-#include "GameFramework/CH_GameplayMessageSubsystem.h"
+#include "GameFramework/GameplayMessageSubsystem.h"
 #include "Interface/ItemDefinitionInterface.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Message/GlobalNativeTags.h"
@@ -377,7 +377,7 @@ void FInventoryList::BroadcastChangeMessage(const FInventoryEntry& Entry, const 
 	Message.NewCount = NewCount;
 	Message.Delta = NewCount - OldCount;
 
-	UCH_GameplayMessageSubsystem& MessageSystem = UCH_GameplayMessageSubsystem::Get(OwnerComponent->GetWorld());
+	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(OwnerComponent->GetWorld());
 	MessageSystem.BroadcastMessage(TAG_Inventory_Message_StackChanged, Message);
 }
 
@@ -391,7 +391,7 @@ void FInventoryList::BroadcastEmptyInstanceMessage(const int32 InIndex) const
 	Message.NewCount = 1;
 	Message.Delta = 0;
 
-	UCH_GameplayMessageSubsystem& MessageSystem = UCH_GameplayMessageSubsystem::Get(OwnerComponent->GetWorld());
+	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(OwnerComponent->GetWorld());
 	MessageSystem.BroadcastMessage(TAG_Inventory_Message_StackChanged, Message);
 }
 

@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Core/ActorComponentBase.h"
 #include "GameplayTagContainer.h"
-#include "GameFramework/CH_GameplayMessageSubsystem.h"
+#include "GameFramework/GameplayMessageSubsystem.h"
 #include "Message/TransactionMessage.h"
 #include "ShopActorComponent.generated.h"
 
@@ -59,7 +59,7 @@ private:
 		UUW_ConfirmWindow* ConfirmWindow;
 
 	//交易监听句柄
-	FCH_GameplayMessageListenerHandle TransactionListenerHandle;
+	FGameplayMessageListenerHandle TransactionListenerHandle;
 
 	FTransactionMessage CacheNotification;
 protected:

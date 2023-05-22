@@ -3,15 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-
 #include "ActorComponents/QuickBarComponent.h"
-
 #include "Blueprint/UserWidget.h"
-
 #include "Components/ListView.h"
-
-#include "GameFramework/CH_GameplayMessageSubsystem.h"
-
+#include "GameFramework/GameplayMessageSubsystem.h"
 #include "UW_QuickBar.generated.h"
 
 class UButton;
@@ -23,7 +18,7 @@ class SIMPLESHOP_API UUW_QuickBar : public UUserWidget
 {
 	GENERATED_BODY()
 
-	FCH_GameplayMessageListenerHandle OnSlotsChangeListenerHandle;
+	FGameplayMessageListenerHandle OnSlotsChangeListenerHandle;
 public:
 	UUW_QuickBar(const FObjectInitializer& ObjectInitializer);
 	

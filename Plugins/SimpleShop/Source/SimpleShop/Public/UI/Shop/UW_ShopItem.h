@@ -16,7 +16,7 @@ class SIMPLESHOP_API UUW_ShopItem : public UUW_ItemSlotBase
 
 private:
 	//监听钱包交易
-	FCH_GameplayMessageListenerHandle WalletListenerHandle;
+	FGameplayMessageListenerHandle WalletListenerHandle;
 
 	/**
 	 * @brief 库存数量

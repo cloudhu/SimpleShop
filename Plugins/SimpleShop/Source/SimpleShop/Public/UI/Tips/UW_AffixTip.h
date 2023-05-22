@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "GameplayTagContainer.h"
-#include "GameFramework/CH_GameplayMessageSubsystem.h"
+#include "GameFramework/GameplayMessageSubsystem.h"
 #include "Blueprint/IUserObjectListEntry.h"
 #include "UW_AffixTip.generated.h"
 
@@ -49,5 +49,5 @@ protected:
 
 private:
 	//监听句柄
-	FCH_GameplayMessageListenerHandle ListenerHandle;
+	FGameplayMessageListenerHandle ListenerHandle;
 };

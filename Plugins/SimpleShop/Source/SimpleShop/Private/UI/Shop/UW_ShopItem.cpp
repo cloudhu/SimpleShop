@@ -54,7 +54,7 @@ void UUW_ShopItem::OnClickedWidget()
 		MaxCountTmp = StockAmount;
 	}
 	TransactionMessage.MaxCount = MaxCountTmp;
-	UCH_GameplayMessageSubsystem& MessageSystem = UCH_GameplayMessageSubsystem::Get(GetWorld());
+	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 	MessageSystem.BroadcastMessage(TAG_Transaction_Message, TransactionMessage);
 }
 
@@ -92,7 +92,7 @@ FReply UUW_ShopItem::NativeOnMouseButtonDown(const FGeometry& InGeometry, const 
 		{
 			Message.ItemID = INDEX_NONE; //不可合成的物品
 		}
-		UCH_GameplayMessageSubsystem& MessageSystem = UCH_GameplayMessageSubsystem::Get(GetWorld());
+		UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 		MessageSystem.BroadcastMessage(TAG_Item_Message_Compound, Message);
 	}
 
@@ -125,7 +125,7 @@ void UUW_ShopItem::NativeConstruct()
 {
 	Super::NativeConstruct();
 	//监听钱包发出的货币变更消息
-	UCH_GameplayMessageSubsystem& MessageSystem = UCH_GameplayMessageSubsystem::Get(GetWorld());
+	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 	WalletListenerHandle = MessageSystem.RegisterListener(TAG_Wallet_Message_GoldChanged, this, &ThisClass::OnNotificationWalletChangeMessage);
 }
 

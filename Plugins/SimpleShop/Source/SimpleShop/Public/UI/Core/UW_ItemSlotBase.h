@@ -6,7 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "GameplayTagContainer.h"
 #include "Blueprint/IUserObjectListEntry.h"
-#include "GameFramework/CH_GameplayMessageSubsystem.h"
+#include "GameFramework/GameplayMessageSubsystem.h"
 #include "Message/TransactionMessage.h"
 #include "UW_ItemSlotBase.generated.h"
 
@@ -58,7 +58,7 @@ private:
 	//数据缓存
 	const FItemTable* DataTable;
 
-	FCH_GameplayMessageListenerHandle ListenerHandle;
+	FGameplayMessageListenerHandle ListenerHandle;
 
 public:
 	UPROPERTY(BlueprintReadOnly, Category = Item, meta = (BindWidget))

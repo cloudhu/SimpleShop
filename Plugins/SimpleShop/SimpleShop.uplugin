@@ -3,7 +3,7 @@
 	"Version": 1,
 	"VersionName": "1.0",
 	"FriendlyName": "SimpleShop",
-	"Description": "",
+	"Description": "UE5 Shop & Inventory & QuickBar Plugin",
 	"Category": "UI",
 	"CreatedBy": "CloudHu",
 	"CreatedByURL": "",
@@ -19,16 +19,15 @@
 			"Name": "SimpleShop",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
-		},
-		{
-			"Name": "CloudGameplayMessageNodes",
-			"Type": "UncookedOnly",
-			"LoadingPhase": "Default"
 		}
 	],
 	"Plugins": [
 		{
 			"Name": "GameplayTagsEditor",
+			"Enabled": true
+		},
+		{
+			"Name": "GameplayMessageRouter",
 			"Enabled": true
 		}
 	]

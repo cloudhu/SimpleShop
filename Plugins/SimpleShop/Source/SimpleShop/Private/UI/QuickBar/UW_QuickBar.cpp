@@ -9,7 +9,7 @@ void UUW_QuickBar::NativeConstruct()
 	Super::NativeConstruct();
 
 	//监听快捷栏变化
-	UCH_GameplayMessageSubsystem& MessageSubsystem = UCH_GameplayMessageSubsystem::Get(GetWorld());
+	UGameplayMessageSubsystem& MessageSubsystem = UGameplayMessageSubsystem::Get(GetWorld());
 	OnSlotsChangeListenerHandle = MessageSubsystem.RegisterListener(TAG_QuickBar_Message_SlotsChanged, this, &ThisClass::OnNotificationSlotsChangeMessage);
 
 	ButtonExpand->OnClicked.AddDynamic(this, &ThisClass::ExpandQuickBar);

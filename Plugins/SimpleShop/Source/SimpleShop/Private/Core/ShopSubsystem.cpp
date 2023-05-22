@@ -40,7 +40,7 @@ void UShopSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	//日志记录
 	UE_LOG(LogSimpleShop,Log,TEXT("UShopSubsystem已经初始化"));
 	// 监听交易消息
-	UCH_GameplayMessageSubsystem& MessageSystem = UCH_GameplayMessageSubsystem::Get(GetWorld());
+	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 	TransactionListenerHandle = MessageSystem.RegisterListener(TAG_ConfirmedTransaction_Message, this, &ThisClass::OnNotificationTransactionMessage);
 }
 //PRAGMA_ENABLE_OPTIMIZATION
@@ -137,7 +137,7 @@ void UShopSubsystem::Deinitialize()
 
 void UShopSubsystem::OnNotificationTransactionMessage(FGameplayTag Channel, const FConfirmedTransactionMessage& Notification)
 {
-	UCH_GameplayMessageSubsystem& MessageSystem = UCH_GameplayMessageSubsystem::Get(GetWorld());
+	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 	FTransactionMessageResult ResultMessage;
 	ResultMessage.Buyer = Notification.Buyer;
 	ResultMessage.Seller = Notification.Seller;

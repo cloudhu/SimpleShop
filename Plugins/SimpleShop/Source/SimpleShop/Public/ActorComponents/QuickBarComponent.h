@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/CH_GameplayMessageSubsystem.h"
 #include "Core/ActorComponentBase.h"
 #include "QuickBarComponent.generated.h"
 

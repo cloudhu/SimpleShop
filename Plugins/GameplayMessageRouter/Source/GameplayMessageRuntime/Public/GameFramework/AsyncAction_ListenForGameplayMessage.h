@@ -3,22 +3,23 @@
 #pragma once
 
 #include "Kismet/BlueprintAsyncActionBase.h"
-#include "CH_GameplayMessageSubsystem.h"
-#include "CH_GameplayMessageTypes.h"
+#include "GameplayMessageSubsystem.h"
+#include "GameplayMessageTypes2.h"
 #include "Engine/CancellableAsyncAction.h"
-#include "AsyncAction_CHListenForGameplayMessage.generated.h"
 
-class UCH_AsyncAction_RegisterGameplayMessageReceiver;
+#include "AsyncAction_ListenForGameplayMessage.generated.h"
+
+class UAsyncAction_RegisterGameplayMessageReceiver;
 
 /**
  * Proxy object pin will be hidden in K2Node_GameplayMessageAsyncAction. Is used to get a reference to the object triggering the delegate for the follow up call of 'GetPayload'.
- * * 这是从Lyra消息插件GameplayMessageRouter提取出来的,目标是将整个插件完全独立解耦出来
+ *
  * @param ActualChannel		The actual message channel that we received Payload from (will always start with Channel, but may be more specific if partial matches were enabled)
  */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAsyncGameplayMessageDelegate, UAsyncAction_CHListenForGameplayMessage*, ProxyObject, FGameplayTag, ActualChannel);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAsyncGameplayMessageDelegate, UAsyncAction_ListenForGameplayMessage*, ProxyObject, FGameplayTag, ActualChannel);
 
 UCLASS(BlueprintType, meta=(HasDedicatedAsyncNode))
-class SIMPLESHOP_API UAsyncAction_CHListenForGameplayMessage : public UCancellableAsyncAction
+class GAMEPLAYMESSAGERUNTIME_API UAsyncAction_ListenForGameplayMessage : public UCancellableAsyncAction
 {
 	GENERATED_BODY()
 
@@ -31,7 +32,7 @@ public:
 	 * @param MatchType			The rule used for matching the channel with broadcasted messages
 	 */
 	UFUNCTION(BlueprintCallable, Category = Messaging, meta = (WorldContext = "WorldContextObject", BlueprintInternalUseOnly = "true"))
-	static UAsyncAction_CHListenForGameplayMessage* ListenForGameplayMessages(UObject* WorldContextObject, FGameplayTag Channel, UScriptStruct* PayloadType, ECH_GameplayMessageMatch MatchType = ECH_GameplayMessageMatch::ExactMatch);
+	static UAsyncAction_ListenForGameplayMessage* ListenForGameplayMessages(UObject* WorldContextObject, FGameplayTag Channel, UScriptStruct* PayloadType, EGameplayMessageMatch MatchType = EGameplayMessageMatch::ExactMatch);
 
 	/**
 	 * Attempt to copy the payload received from the broadcasted gameplay message into the specified wildcard.
@@ -62,7 +63,7 @@ private:
 	TWeakObjectPtr<UWorld> WorldPtr;
 	FGameplayTag ChannelToRegister;
 	TWeakObjectPtr<UScriptStruct> MessageStructType = nullptr;
-	ECH_GameplayMessageMatch MessageMatchType = ECH_GameplayMessageMatch::ExactMatch;
+	EGameplayMessageMatch MessageMatchType = EGameplayMessageMatch::ExactMatch;
 
-	FCH_GameplayMessageListenerHandle ListenerHandle;
+	FGameplayMessageListenerHandle ListenerHandle;
 };

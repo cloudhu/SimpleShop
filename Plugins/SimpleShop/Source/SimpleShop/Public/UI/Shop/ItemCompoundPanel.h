@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "GameFramework/CH_GameplayMessageSubsystem.h"
+#include "GameFramework/GameplayMessageSubsystem.h"
 #include "Message/UserInterfaceMessage.h"
 #include "ItemCompoundPanel.generated.h"
 
@@ -90,5 +90,5 @@ protected:
 	virtual void NativeDestruct() override;
 private:
 	//监听合成物品的消息
-	FCH_GameplayMessageListenerHandle ListenerHandle;
+	FGameplayMessageListenerHandle ListenerHandle;
 };

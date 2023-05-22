@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class CloudGameplayMessageNodes : ModuleRules
+public class GameplayMessageNodes : ModuleRules
 {
-	public CloudGameplayMessageNodes(ReadOnlyTargetRules Target) : base(Target)
+	public GameplayMessageNodes(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
@@ -17,7 +17,7 @@ public class CloudGameplayMessageNodes : ModuleRules
 				"Engine",
 				"KismetCompiler",
 				"PropertyEditor",
-				"SimpleShop",
+				"GameplayMessageRuntime",
 				"UnrealEd"
 			}
         );

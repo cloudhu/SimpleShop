@@ -42,6 +42,7 @@ public class SimpleShop : ModuleRules
 				"InputCore",
 				"UMG",
 				"NetCore",
+				"GameplayMessageRuntime",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

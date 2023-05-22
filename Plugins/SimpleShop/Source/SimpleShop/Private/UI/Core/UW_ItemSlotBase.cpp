@@ -181,7 +181,7 @@ void UUW_ItemSlotBase::SellItem() const
 	}
 
 	TransactionMessage.MaxCount = MaxSellAmount;
-	UCH_GameplayMessageSubsystem& MessageSystem = UCH_GameplayMessageSubsystem::Get(GetWorld());
+	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 	MessageSystem.BroadcastMessage(TAG_Transaction_Message, TransactionMessage);
 }
 
@@ -235,8 +235,9 @@ void UUW_ItemSlotBase::NativeConstruct()
 	Super::NativeConstruct();
 
 	ItemButton->OnClicked.AddDynamic(this, &ThisClass::OnClickedWidget);
-	//监听交易消息
-	UCH_GameplayMessageSubsystem& MessageSystem = UCH_GameplayMessageSubsystem::Get(GetWorld());
+	//监听交易消息: 0.获取游戏消息子系统
+	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
+	//1.通过游戏消息子系统注册监听交易结果的消息
 	ListenerHandle = MessageSystem.RegisterListener(TAG_Transaction_Message_Result, this, &ThisClass::OnNotificationTransactionResultMessage);
 }
 

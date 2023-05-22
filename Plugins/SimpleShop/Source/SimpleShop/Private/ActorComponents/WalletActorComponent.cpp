@@ -1,6 +1,6 @@
 //  Copyright CloudHu. All Rights Reserved.
 #include "ActorComponents/WalletActorComponent.h"
-#include "GameFramework/CH_GameplayMessageSubsystem.h"
+#include "GameFramework/GameplayMessageSubsystem.h"
 #include "Message/GlobalNativeTags.h"
 #include "Message/TransactionMessage.h"
 
@@ -50,7 +50,7 @@ void UWalletActorComponent::BroadcastGoldChangeMessage(int32 OldNum, int32 NewNu
 	Message.OldNum = OldNum;
 	Message.NewNum = NewNum;
 
-	UCH_GameplayMessageSubsystem& MessageSystem = UCH_GameplayMessageSubsystem::Get(GetWorld());
+	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 	MessageSystem.BroadcastMessage(TAG_Wallet_Message_GoldChanged, Message);
 }
 

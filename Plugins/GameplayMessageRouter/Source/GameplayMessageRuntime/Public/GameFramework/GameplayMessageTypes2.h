@@ -4,13 +4,14 @@
 
 #include "GameplayTagContainer.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "CH_GameplayMessageTypes.generated.h"
 
-class UCH_GameplayMessageRouter;
+#include "GameplayMessageTypes2.generated.h"
 
-// Match rule for message listeners  * 这是从Lyra消息插件GameplayMessageRouter提取出来的,目标是将整个插件完全独立解耦出来
+class UGameplayMessageRouter;
+
+// Match rule for message listeners
 UENUM(BlueprintType)
-enum class ECH_GameplayMessageMatch : uint8
+enum class EGameplayMessageMatch : uint8
 {
 	// An exact match will only receive messages with exactly the same channel
 	// (e.g., registering for "A.B" will match a broadcast of A.B but not A.B.C)
@@ -25,10 +26,10 @@ enum class ECH_GameplayMessageMatch : uint8
  * Struct used to specify advanced behavior when registering a listener for gameplay messages
  */
 template<typename FMessageStructType>
-struct FCH_GameplayMessageListenerParams
+struct FGameplayMessageListenerParams
 {
 	/** Whether Callback should be called for broadcasts of more derived channels or if it will only be called for exact matches. */
-	ECH_GameplayMessageMatch MatchType = ECH_GameplayMessageMatch::ExactMatch;
+	EGameplayMessageMatch MatchType = EGameplayMessageMatch::ExactMatch;
 
 	/** If bound this callback will trigger when a message is broadcast on the specified channel. */
 	TFunction<void(FGameplayTag, const FMessageStructType&)> OnMessageReceivedCallback;

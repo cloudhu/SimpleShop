@@ -34,7 +34,7 @@ void UUW_CompoundItem::OnClickedWidget()
 		}
 	}
 
-	UCH_GameplayMessageSubsystem& MessageSystem = UCH_GameplayMessageSubsystem::Get(GetWorld());
+	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 	MessageSystem.BroadcastMessage(TAG_Transaction_Message, TransactionMessage);
 }
 
@@ -61,7 +61,7 @@ void UUW_CompoundItem::NativeConstruct()
 {
 	Super::NativeConstruct();
 	//监听钱包发出的货币变更消息
-	UCH_GameplayMessageSubsystem& MessageSystem = UCH_GameplayMessageSubsystem::Get(GetWorld());
+	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 	WalletListenerHandle2 = MessageSystem.RegisterListener(TAG_Wallet_Message_GoldChanged, this, &ThisClass::OnNotificationWalletChangeMessage);
 }
 

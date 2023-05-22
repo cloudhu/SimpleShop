@@ -18,7 +18,7 @@ void UUW_AffixTip::BindAffixTip(FGameplayTag Tag)
 	}
 
 	// 监听词缀消息
-	UCH_GameplayMessageSubsystem& MessageSystem = UCH_GameplayMessageSubsystem::Get(GetWorld());
+	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 	ListenerHandle = MessageSystem.RegisterListener(Tag, this, &ThisClass::OnAffixChangeMessage);
 
 	TArray<FString> stringArray;
