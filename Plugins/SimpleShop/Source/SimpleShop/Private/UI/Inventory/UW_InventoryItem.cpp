@@ -13,7 +13,7 @@ void UUW_InventoryItem::OnClickedWidget()
 {
 	Super::OnClickedWidget();
 	//发送交易消息
-	SellItem();
+	BroadcastTransactionMessage();
 }
 
 void UUW_InventoryItem::OnItemStackChanged(FGameplayTag Chanel, const FInventoryChangeMessage& Message)

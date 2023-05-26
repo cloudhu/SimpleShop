@@ -57,6 +57,7 @@ void UUW_ItemSlotBase::UpdateSlot(const FItemTable* InTable)
 {
 	if (InTable == nullptr)
 	{
+		//重置缓存数据
 		DataTable = nullptr;
 		SetItemID(INDEX_NONE);
 		SetItemPrice(9999);
@@ -69,16 +70,20 @@ void UUW_ItemSlotBase::UpdateSlot(const FItemTable* InTable)
 
 	if (DataTable == InTable)
 	{
+		//相同的数据不需要更新
 		ShowIcon(true);
 		return;
 	}
 
 	if (InTable && InTable->IsValid())
 	{
+		//缓存数据
 		DataTable = InTable;
+		//更新UI
 		ShowIcon(true);
 		SetItemID(InTable->ID);
 		SetItemPrice(InTable->Price);
+		//更新提示信息
 		if (!TipPtr)
 		{
 			ItemButton->SetToolTip(GetTip());
@@ -90,14 +95,14 @@ void UUW_ItemSlotBase::UpdateSlot(const FItemTable* InTable)
 				SetIconBrush(ItemDef->Execute_GetIconBrush(Obj));
 				TipPtr->SetDisplayNameText(ItemDef->Execute_GetDisplayName(Obj));
 				TipPtr->SetDescribeText(ItemDef->Execute_GetIntroduction(Obj));
-				TipPtr->ListenForStats(ItemDef->Execute_GetStats(Obj), GetGuid());
+				TipPtr->DisplayStats(ItemDef->Execute_GetStats(Obj), GetGuid());
 			}
 			else if (Obj->Implements<UItemDefinitionInterface>())
 			{
 				SetIconBrush(IItemDefinitionInterface::GetIconBrush(Obj));
 				TipPtr->SetDisplayNameText(IItemDefinitionInterface::GetDisplayName(Obj));
 				TipPtr->SetDescribeText(IItemDefinitionInterface::GetIntroduction(Obj));
-				TipPtr->ListenForStats(IItemDefinitionInterface::GetStats(Obj), GetGuid());
+				TipPtr->DisplayStats(IItemDefinitionInterface::GetStats(Obj), GetGuid());
 			}
 		}
 
@@ -142,10 +147,11 @@ void UUW_ItemSlotBase::ShowIcon(const bool bVisible) const
 	}
 }
 
-void UUW_ItemSlotBase::SellItem() const
+void UUW_ItemSlotBase::BroadcastTransactionMessage() const
 {
+	//交易消息声明
 	FTransactionMessage TransactionMessage;
-	TransactionMessage.Buyer = GetItemOwner(); //出售时,物品所有者被设置成触发交易的角色
+	TransactionMessage.Buyer = GetItemOwner(); //交易时,物品所有者被设置成触发交易的角色
 	TransactionMessage.Seller = GetOwningPlayerPawn();
 	TransactionMessage.ItemID = GetItemID();
 	TransactionMessage.InstanceID = GetInstanceIndex();
@@ -181,6 +187,7 @@ void UUW_ItemSlotBase::SellItem() const
 	}
 
 	TransactionMessage.MaxCount = MaxSellAmount;
+	//用游戏消息子系统广播交易消息
 	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 	MessageSystem.BroadcastMessage(TAG_Transaction_Message, TransactionMessage);
 }
@@ -238,19 +245,20 @@ void UUW_ItemSlotBase::NativeConstruct()
 	//监听交易消息: 0.获取游戏消息子系统
 	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 	//1.通过游戏消息子系统注册监听交易结果的消息
-	ListenerHandle = MessageSystem.RegisterListener(TAG_Transaction_Message_Result, this, &ThisClass::OnNotificationTransactionResultMessage);
+	TransactionMessageListenerHandle = MessageSystem.RegisterListener(TAG_Transaction_Message_Result, this, &ThisClass::OnNotificationTransactionResultMessage);
 }
 
 UWidget* UUW_ItemSlotBase::GetTip()
 {
+	//如果没有缓存的指针，就创建一个
 	if (!TipPtr)
 	{
-		if (TipClass)
+		if (TipClass)//创建该部件必须要有对应的类
 		{
 			TipPtr = CreateWidget<UUW_ItemTips>(GetWorld(), TipClass);
 		}
 	}
-
+	//返回提示窗口的指针
 	return TipPtr;
 }
 
@@ -258,9 +266,9 @@ void UUW_ItemSlotBase::NativeDestruct()
 {
 	Super::NativeDestruct();
 	//取消监听
-	if (ListenerHandle.IsValid())
+	if (TransactionMessageListenerHandle.IsValid())
 	{
-		ListenerHandle.Unregister();
+		TransactionMessageListenerHandle.Unregister();
 	}
 }
 

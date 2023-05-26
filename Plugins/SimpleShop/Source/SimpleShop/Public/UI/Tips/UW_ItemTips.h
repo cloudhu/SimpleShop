@@ -12,7 +12,7 @@ class UTextBlock;
 class UListView;
 class UUW_AffixTip;
 /**
- * 提示信息
+ * 物品提示信息窗口
  */
 UCLASS(BlueprintType, Blueprintable)
 class SIMPLESHOP_API UUW_ItemTips : public UUserWidget
@@ -21,32 +21,60 @@ class SIMPLESHOP_API UUW_ItemTips : public UUserWidget
 public:
 	UUW_ItemTips(const FObjectInitializer& ObjectInitializer);
 public:
-	//显示名称
+	/**
+	 * @brief 显示名称
+	 */
 	UPROPERTY(BlueprintReadOnly, Category = Tips, meta = (BindWidget))
 		UTextBlock* DisplayName;
 
-	//描述
+	/**
+	 * @brief 描述文本
+	 */
 	UPROPERTY(BlueprintReadOnly, Category = Tips, meta = (BindWidget))
 		UTextBlock* DescribeText;
 
-	//价格
+	/**
+	 * @brief 价格文本
+	 */
 	UPROPERTY(BlueprintReadOnly, Category = Tips, meta = (BindWidget))
 		UTextBlock* PriceText;
 
+	/**
+	 * @brief 价格存放的盒子
+	 */
 	UPROPERTY(BlueprintReadOnly, Category = Tips, meta = (BindWidget))
 		UHorizontalBox* PriceBox;
 
+	/**
+	 * @brief 词缀列表视图
+	 */
 	UPROPERTY(BlueprintReadOnly, Category = Tips, meta = (BindWidget))
-		UListView* ListTips;
+		UListView* ListAffix;
 public:
+	/**
+	 * @brief 设置显示名称文本
+	 * @param InText 文本
+	 */
 	void SetDisplayNameText(const FText& InText) const;
 
+	/**
+	 * @brief 设置描述文本
+	 * @param InText 文本
+	 */
 	void SetDescribeText(const FText& InText) const;
 
+	/**
+	 * @brief 设置价格文本
+	 * @param InText 价格
+	 */
 	void SetPriceText(const FText& InText) const;
 
 public:
-	/** 监听词缀状态变化 */
-	void ListenForStats(const TMap<FGameplayTag, int32> Stats,const FGuid Guid) const;
+	/**
+	 * @brief 显示词缀
+	 * @param Stats 词缀
+	 * @param Guid 全局唯一编号
+	 */
+	void DisplayStats(const TMap<FGameplayTag, int32> Stats,const FGuid Guid) const;
 
 };

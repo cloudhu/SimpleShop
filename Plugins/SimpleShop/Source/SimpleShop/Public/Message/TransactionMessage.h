@@ -142,7 +142,7 @@ struct FConfirmedTransactionMessage
 	bool bIsCompoundItem = false;
 };
 
-//词缀数量变化消息
+///词缀数量变化消息
 USTRUCT(BlueprintType)
 struct FAffixChangeMessage
 {

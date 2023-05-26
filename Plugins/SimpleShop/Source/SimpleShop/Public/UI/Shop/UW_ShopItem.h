@@ -23,9 +23,9 @@ private:
 	 */
 	int32 StockAmount;
 public:
-	/// <summary>
-	/// 商品被鼠标左键点击时是购买
-	/// </summary>
+	/**
+	 * @brief 商品被鼠标左键点击时是购买
+	 */
 	virtual void OnClickedWidget() override;
 
 	virtual void UpdateSlot(const FItemTable* InTable) override;
@@ -34,7 +34,11 @@ public:
 
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
-	//交易消息通知
+	/**
+	 * @brief 收到交易消息通知时
+	 * @param Channel 消息频道
+	 * @param Notification 消息内容
+	 */
 	void OnNotificationWalletChangeMessage(FGameplayTag Channel, const FWalletChangeMessage& Notification);
 protected:
 	virtual void NativeConstruct() override;

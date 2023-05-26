@@ -3,12 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "CoreUObject.h"
 #include "GameplayTagContainer.h"
 #include "ItemCategory.generated.h"
 
 /**
- * 物品定义
+ * 物品目录对象
  */
 UCLASS(Blueprintable, BlueprintType, Const)
 class SIMPLESHOP_API UItemCategory :public UObject

@@ -46,7 +46,7 @@ public:
 
 	void ChangeShopOwner(APawn* InOwner);
 
-	UUW_ConfirmWindow* GetConfirmWindow() { return ConfirmWindow; }
+	UUW_ConfirmWindow* GetConfirmWindow() const { return ConfirmWindow; }
 protected:
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 

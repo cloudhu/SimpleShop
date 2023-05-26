@@ -43,25 +43,28 @@ void UUW_ItemTips::SetPriceText(const FText& InText) const
 	PriceText->SetText(InText);
 }
 
-void UUW_ItemTips::ListenForStats(const TMap<FGameplayTag, int32> Stats, const FGuid Guid) const
+void UUW_ItemTips::DisplayStats(const TMap<FGameplayTag, int32> Stats, const FGuid Guid) const
 {
-	if (ListTips)
+	if (ListAffix)
 	{
 		if (Stats.Num() > 0)
 		{
-			ListTips->SetVisibility(ESlateVisibility::Visible);
+			ListAffix->SetVisibility(ESlateVisibility::Visible);
+			//遍历词缀数据
 			for (auto& Stat : Stats)
 			{
+				//新建词缀数据传输的对象，对其进行赋值
 				UTipItem* Item = NewObject<UTipItem>(GetOwningPlayerPawn());
 				Item->Chanel = Stat.Key;
 				Item->Delta = Stat.Value;
 				Item->Guid = Guid;
-				ListTips->AddItem(Item);
+				//添加到ListView列表视图中显示
+				ListAffix->AddItem(Item);
 			}
 		}
 		else
 		{
-			ListTips->SetVisibility(ESlateVisibility::Collapsed);
+			ListAffix->SetVisibility(ESlateVisibility::Collapsed);
 		}
 	}
 }

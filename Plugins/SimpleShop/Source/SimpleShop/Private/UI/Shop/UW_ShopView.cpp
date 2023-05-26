@@ -27,7 +27,7 @@ void UUW_ShopView::NativeConstruct()
 	Super::NativeConstruct();
 	// 监听目录点击消息
 	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
-	ListenerHandle = MessageSystem.RegisterListener(TAG_Shop_CategoryOnClick_Message, this, &ThisClass::OnCategoryClicked);
+	CategoryOnclickListenerHandle = MessageSystem.RegisterListener(TAG_Shop_CategoryOnClick_Message, this, &ThisClass::OnCategoryClicked);
 
 	//获取ShopSubsystem商店子系统单例 Use ShopSubsystem
 	UShopSubsystem& ShopSubsystem = UShopSubsystem::Get(GetWorld());
@@ -71,9 +71,9 @@ void UUW_ShopView::NativeConstruct()
 void UUW_ShopView::NativeDestruct()
 {
 	Super::NativeDestruct();
-	if (ListenerHandle.IsValid())
+	if (CategoryOnclickListenerHandle.IsValid())
 	{
-		ListenerHandle.Unregister();
+		CategoryOnclickListenerHandle.Unregister();
 	}
 }
 
@@ -144,7 +144,7 @@ bool UUW_ShopView::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEven
 	{
 		if (const UUW_ItemSlotBase* DraggedSlot = Cast<UUW_ItemSlotBase>(InDragDropOperation->Payload))
 		{
-			DraggedSlot->SellItem();
+			DraggedSlot->BroadcastTransactionMessage();
 			bDrop = true;
 		}
 	}

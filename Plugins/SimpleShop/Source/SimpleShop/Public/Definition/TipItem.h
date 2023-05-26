@@ -3,12 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "CoreUObject.h"
 #include "GameplayTagContainer.h"
 #include "TipItem.generated.h"
 
 /**
- * 物品定义
+ * 传递物品提示数据的对象
  */
 UCLASS(Blueprintable, BlueprintType, Const)
 class SIMPLESHOP_API UTipItem :public UObject
@@ -17,21 +16,34 @@ class SIMPLESHOP_API UTipItem :public UObject
 public:
 	UTipItem(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-	//标签频道
+	/**
+	 * @brief 物品的标签
+	 */
 	UPROPERTY(BlueprintReadOnly, Category = Item)
 		FGameplayTag Chanel;
 
-	//数目
+	/**
+	 * @brief 数目
+	 */
 	UPROPERTY(BlueprintReadOnly, Category = Item)
 		int32 Delta = INDEX_NONE;
 
+	/**
+	 * @brief 全局唯一编号
+	 */
 	FGuid Guid;
-	
-	/** 设置标签. */
+
+	/**
+	 * @brief 设置标签
+	 * @param InTag 标签
+	 */
 	UFUNCTION(BlueprintCallable, Category = "Item")
 		void SetTag(FGameplayTag InTag);
 
-	/** 设置标签. */
+	/**
+	 * @brief 设置数量
+	 * @param InAmount 数值
+	 */
 	UFUNCTION(BlueprintCallable, Category = "Item")
 		void SetAmount(int32 InAmount);
 };

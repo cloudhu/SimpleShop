@@ -146,7 +146,7 @@ public:
 	/**
 	 * @brief 获取数据
 	 * @param Src 实现接口的蓝图类
-	 * @return 标签数量映射表
+	 * @return 标签数量映射表，这些数据就是装备的词缀
 	 */
 	static TMap<FGameplayTag, int32> GetStats(const UObject* Src);
 
