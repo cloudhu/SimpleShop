@@ -25,14 +25,14 @@ void UUW_ShopView::OnCategoryClicked(FGameplayTag Channel, const FCategoryClickM
 void UUW_ShopView::NativeConstruct()
 {
 	Super::NativeConstruct();
-	// 监听目录点击消息
+	// 监听目录点击消息，在商店目录被点击时更新商品
 	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 	CategoryOnclickListenerHandle = MessageSystem.RegisterListener(TAG_Shop_CategoryOnClick_Message, this, &ThisClass::OnCategoryClicked);
 
 	//获取ShopSubsystem商店子系统单例 Use ShopSubsystem
 	UShopSubsystem& ShopSubsystem = UShopSubsystem::Get(GetWorld());
 
-	//1.查找对应品类的物品
+	//1.统计商店目录对应的数量
 	if (const TArray<FItemTable*>* InSlotTableArray = ShopSubsystem.GetSlotTablesTemplate())
 	{
 		for (const FItemTable* Tmp : *InSlotTableArray)
@@ -49,7 +49,7 @@ void UUW_ShopView::NativeConstruct()
 				{
 					IItemDefinitionInterface::GetTypeTags(Obj).GetGameplayTagArray(ItemGameplayTags);
 				}
-				
+				//统计该目录下的物品数量
 				for (const FGameplayTag& TmpTag : ItemGameplayTags)
 				{
 					CategoryStatTags.AddStack(TmpTag, 1);
@@ -57,15 +57,20 @@ void UUW_ShopView::NativeConstruct()
 			}
 		}
 	}
-
+	//给目录进行排序
 	CategoryStatTags.SortMap();
-
+	//将目录数据广播出去
 	for (const auto& Tmp : CategoryStatTags.GetTagMap())
 	{
 		BroadcastCategoryMessage(Tmp.Key, 0, Tmp.Value);
 	}
-
+	//日志记录
+	UE_LOG(LogSimpleShop,Log,TEXT("UW_ShopView商店目录初始化"));
+	//更新商店物品，显示所有物品类型
 	UpdateItem(TAG_Item_Type_All);
+
+	//日志记录
+	UE_LOG(LogSimpleShop,Log,TEXT("UW_ShopView商店物品更新"));
 }
 
 void UUW_ShopView::NativeDestruct()
@@ -86,14 +91,15 @@ void UUW_ShopView::SetShopOwner(APawn* InShopOwner)
 void UUW_ShopView::UpdateItem(const FGameplayTag& TypeTag) const
 {
 	ItemGrid->ClearChildren();
-	//Use ShopSubsystem
+	//获取ShopSubsystem商店子系统单例 Use ShopSubsystem
 	UShopSubsystem& ShopSubsystem = UShopSubsystem::Get(GetWorld());
 
 	//1.查找对应品类的物品
 	if (const TArray<FItemTable*>* InSlotTableArray = ShopSubsystem.GetSlotTablesTemplate())
 	{
+		//声明一个临时的数组，用于保存那些拥有指定标签的数据
 		TArray<const FItemTable*> InTableArray;
-
+		//遍历数据，如果拥有指定的类型标签，说明就是我们要找的物品，将其添加到临时数组中
 		for (const auto& Tmp : *InSlotTableArray)
 		{
 			if (Tmp->ItemTypeHasTag(TypeTag))
@@ -114,18 +120,18 @@ void UUW_ShopView::UpdateItem(const FGameplayTag& TypeTag) const
 					//(1,0) (1,1)
 					//(2,0) (2,1)
 					GridSlot->SetRow(FMath::FloorToInt(static_cast<float>(i) / 2.f));
-					if (i & 0x1)
+					if (i & 0x1)//奇数
 					{
 						GridSlot->SetColumn(1);
 					}
-					else
+					else//偶数
 					{
 						GridSlot->SetColumn(0);
 					}
 
 					GridSlot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Fill);
 					GridSlot->SetVerticalAlignment(EVerticalAlignment::VAlign_Fill);
-
+					//把物品数据传递给格子，从而更新格子里面的物品
 					InSlotWidget->UpdateSlot(InTableArray[i]);
 					//店主应该是商品的主人
 					InSlotWidget->SetItemOwner(ShopOwner);
@@ -172,24 +178,29 @@ void UUW_ShopView::CloseCompoundPanel() const
 
 void UUW_ShopView::BroadcastCategoryMessage(const FGameplayTag InTag, const int32 OldCount, const int32 NewCount) const
 {
-	FCategoryInstanceChangeMessage Message;
-	Message.Character = GetOwningPlayerPawn();
+	//声明传递数据的目录物品对象
 	UItemCategory* Category = NewObject<UItemCategory>(GetOwningPlayerPawn());
+	//填充数据：目录标签，该目录类型的物品数量
 	Category->SetTag(InTag);
 	Category->SetAmount(NewCount);
+	//声明目录实例变化消息
+	FCategoryInstanceChangeMessage Message;
+	//给消息填充数据
+	Message.Character = GetOwningPlayerPawn();
 	Message.ItemCategory = Category;
 	Message.NewNum = NewCount;
 	Message.Delta = NewCount - OldCount;
-
+	//获取游戏消息子系统，广播消息
 	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 	MessageSystem.BroadcastMessage(TAG_Shop_Category_Message, Message);
 
-	if (OldCount == 0) //新增
+	//更新目录列表
+	if (OldCount == 0) //原来没有=新增
 	{
 		CategoryList->AddItem(Category);
 	}
 
-	if (Message.NewNum == 0) //删除
+	if (Message.NewNum == 0) //新的数量为零=删除
 	{
 		CategoryList->RemoveItem(Category);
 	}

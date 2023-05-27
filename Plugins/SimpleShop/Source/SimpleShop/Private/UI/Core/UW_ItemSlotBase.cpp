@@ -57,7 +57,7 @@ void UUW_ItemSlotBase::UpdateSlot(const FItemTable* InTable)
 {
 	if (InTable == nullptr)
 	{
-		//重置缓存数据
+		//如果传入的数据无效则重置缓存数据
 		DataTable = nullptr;
 		SetItemID(INDEX_NONE);
 		SetItemPrice(9999);
@@ -88,15 +88,18 @@ void UUW_ItemSlotBase::UpdateSlot(const FItemTable* InTable)
 		{
 			ItemButton->SetToolTip(GetTip());
 		}
+		//获取物品定义的CDO对象
 		if (const UObject* Obj = GetDefault<UObject>(InTable->ItemDefinition))
 		{
+			//如果是C++实现，则可以转化成接口
 			if (const IItemDefinitionInterface* ItemDef = Cast<IItemDefinitionInterface>(Obj))
 			{
+				//通过接口获取物品定义的数据，根据数据更新UI显示
 				SetIconBrush(ItemDef->Execute_GetIconBrush(Obj));
 				TipPtr->SetDisplayNameText(ItemDef->Execute_GetDisplayName(Obj));
 				TipPtr->SetDescribeText(ItemDef->Execute_GetIntroduction(Obj));
 				TipPtr->DisplayStats(ItemDef->Execute_GetStats(Obj), GetGuid());
-			}
+			}//蓝图实现则调用接口的静态方法
 			else if (Obj->Implements<UItemDefinitionInterface>())
 			{
 				SetIconBrush(IItemDefinitionInterface::GetIconBrush(Obj));
@@ -105,7 +108,7 @@ void UUW_ItemSlotBase::UpdateSlot(const FItemTable* InTable)
 				TipPtr->DisplayStats(IItemDefinitionInterface::GetStats(Obj), GetGuid());
 			}
 		}
-
+		//设置价格
 		TipPtr->SetPriceText(FText::Format(NSLOCTEXT("UUW_ItemSlotBase", "SetPriceText", "{0}"), Price));
 		TipPtr->SetVisibility(ESlateVisibility::HitTestInvisible);
 		SetItemIsEnabled(true);

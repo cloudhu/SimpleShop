@@ -60,7 +60,9 @@ void UUW_ShopItem::OnClickedWidget()
 
 void UUW_ShopItem::UpdateSlot(const FItemTable* InTable)
 {
+	//更新基类
 	Super::UpdateSlot(InTable);
+	//更新库存数量
 	StockAmount = InTable->Stock;
 	SetNumText(StockAmount);
 }
