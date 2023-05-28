@@ -6,7 +6,6 @@
 #include "GameplayTagContainer.h"
 #include "ActorComponents/InventoryManagerActorComponent.h"
 #include "Blueprint/UserWidget.h"
-#include "Components/TextBlock.h"
 #include "Components/TileView.h"
 #include "GameFramework/GameplayMessageSubsystem.h"
 #include "Message/GlobalNativeTags.h"
@@ -15,6 +14,7 @@
 #include "UW_InventoryPanel.generated.h"
 
 class UButton;
+class UTextBlock;
 /**
  * 背包面板
  */

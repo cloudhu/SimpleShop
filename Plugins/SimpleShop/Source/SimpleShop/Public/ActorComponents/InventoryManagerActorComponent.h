@@ -60,6 +60,9 @@ public:
 	// Sets default values for this component's properties
 	UInventoryManagerActorComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
+	/**
+	* @brief 升级确认窗口类
+	*/
 	UPROPERTY(EditDefaultsOnly, Category = Inventory)
 	TSubclassOf<UUW_UpgradeConfirm> UpgradeConfirmClass;
 protected:
@@ -73,23 +76,30 @@ public:
 		return (Actor ? Actor->FindComponentByClass<UInventoryManagerActorComponent>() : nullptr);
 	}
 
-	/// <summary>
-	/// 是否可以添加物品定义
-	/// </summary>
+	/**
+	 * @brief 是否可以添加物品定义
+	 * @param ItemClass 物品类
+	 * @param StackCount 数量
+	 * @return true 可以； false 不可以
+	 */
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = Inventory)
 	bool CanAddItemDefinition(const TSubclassOf<UObject> ItemClass, const int32 StackCount = 1);
 
-	/// <summary>
-	/// 添加物品定义
-	/// </summary>
+	/**
+	 * @brief 添加物品定义
+	 * @param ItemClass 物品类
+	 * @param InItemID 物品编号
+	 * @param StackCount 数量
+	 * @return 物品实例
+	 */
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = Inventory)
 	UItemInstance* AddItemDefinition(const TSubclassOf<UObject> ItemClass, const int32 InItemID, const int32 StackCount = 1);
 
-	/// <summary>
-	/// 从背包中移除指定索引的物品
-	/// </summary>
-	/// <param name="InInstanceIndex">物品编号</param>
-	/// <param name="InCount">数量</param>
+	/**
+	 * @brief 从背包中移除指定索引的物品
+	 * @param InInstanceIndex 物品编号
+	 * @param InCount 数量
+	 */
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = Inventory)
 	void RemoveItemByIndex(const int32 InInstanceIndex, const int32 InCount = 1);
 
@@ -99,23 +109,27 @@ public:
 	 */
 	void UpdateItemsHasTag(const FGameplayTag& InTag) const;
 
+	/**
+	 * @brief 获取所有有效物品
+	 * @return 物品实例数组
+	 */
 	TArray<UItemInstance*> GetAllValidItems() const;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = Inventory)
 	TArray<UItemCategory*> GetCategoryArray() const { return CategoryArray; }
 
-	/// <summary>
-	/// 获取指定物品定义的总数
-	/// </summary>
-	/// <param name="ItemDef">物品定义</param>
-	/// <returns>总数</returns>
+	/**
+	 * @brief 获取指定物品定义的总数
+	 * @param ItemDef 物品定义
+	 * @return 总数
+	 */
 	int32 GetTotalItemCountByDefinition(const TSubclassOf<UObject> ItemDef) const;
 
-	/// <summary>
-	/// 获取指定实例编号的物品数量
-	/// </summary>
-	/// <param name="InInstanceIndex">实例编号</param>
-	/// <returns>总数</returns>
+	/**
+	 * @brief 获取指定实例编号的物品数量
+	 * @param InInstanceIndex 实例编号
+	 * @return 总数
+	 */
 	int32 GetTotalItemCountByIndex(const int32 InInstanceIndex) const;
 
 	//~UObject interface
@@ -123,16 +137,20 @@ public:
 	virtual bool ReplicateSubobjects(class UActorChannel* Channel, class FOutBunch* Bunch, FReplicationFlags* RepFlags) override;
 	//~End of UObject interface
 
-	/// <summary>
-	/// 扩展背包容量
-	/// </summary>
-	/// <param name="InCount">扩容的数量</param>
+	/**
+	 * @brief 扩展背包容量
+	 * @param InCount 扩容的数量
+	 */
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = Inventory)
 	void ExpandVolume(const int32 InCount);
 
-	/// <summary>
-	/// 交换物品位置
-	/// </summary>
+	/**
+	 * @brief 交换物品位置
+	 * @param IndexA 索引A
+	 * @param IndexB 索引B
+	 * @param GuidA 全局唯一编号A
+	 * @param GuidB 全局唯一编号B
+	 */
 	UFUNCTION(Server, Reliable, Category=Inventory)
 	void SwapItemPosition(const int32 IndexA, const int32 IndexB, const FGuid GuidA, const FGuid GuidB);
 
@@ -166,11 +184,21 @@ public:
 	FORCEINLINE float GetMaxGravity() const { return MaxGravity; }
 	FORCEINLINE float GetCurrentGravity() const { return CurrentGravity; }
 
+	/**
+	 * @brief 获取剩余的负重
+	 * @return 负重
+	 */
 	float GetRemainingGravity() const;
 
+	/**
+	 * @brief 初始化背包
+	 */
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void InitializeInventory();
 
+	/**
+	 * @brief 升级背包
+	 */
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void UpgradeInventory();
 
@@ -180,24 +208,49 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void ConfirmUpgradeInventory();
 
+	/**
+	 * @brief 是否可以扩容背包
+	 * @return 背包等级未满就可以
+	 */
 	bool CanExpandInventory() const { return Level + 1 < MaxLevel; }
 private:
+	/**
+	 * @brief 广播背包目录消息
+	 * @param InTag 标签
+	 * @param OldCount 旧的数量
+	 * @param NewCount 新的数量
+	 */
 	void BroadcastCategoryMessage(const FGameplayTag InTag, const int32 OldCount, const int32 NewCount);
 
+	/**
+	 * @brief 广播背包变化消息
+	 * @param InTag 标签
+	 * @param Delta 变化
+	 * @param DeltaFloat 变化的浮点数 
+	 */
 	void BroadcastDeltaMessage(const FGameplayTag& InTag, const int32 Delta, const float DeltaFloat = 0.f) const;
 
+	/**
+	 * @brief 移除物品实例目录标签
+	 * @param ItemInstance 物品实例
+	 * @param StackCount 数量
+	 */
 	void RemoveItemInstanceCategoryTag(const UItemInstance* ItemInstance, const int32 StackCount);
 
+	/**
+	 * @brief 更新背包配置
+	 */
 	void UpdateInventoryConfig();
-	/// <summary>
-	/// 物品列表
-	/// </summary>
+	
+	/**
+	 * @brief 物品列表(同步）
+	 */
 	UPROPERTY(Replicated)
 	FInventoryList InventoryList;
 
-	/// <summary>
-	/// 最大格子数量
-	/// </summary>
+	/**
+	 * @brief 最大格子数量
+	 */
 	UPROPERTY(Replicated)
 	int32 MaxVolume;
 
@@ -233,9 +286,15 @@ private:
 	UPROPERTY()
 	TArray<UItemCategory*> CategoryArray;
 
+	/**
+	 * @brief 确认窗口指针
+	 */
 	UPROPERTY()
 	UUW_UpgradeConfirm* ConfirmWindow;
 
+	/**
+	 * @brief 最大背包等级
+	 */
 	UPROPERTY()
 	int32 MaxLevel = 6;
 };
