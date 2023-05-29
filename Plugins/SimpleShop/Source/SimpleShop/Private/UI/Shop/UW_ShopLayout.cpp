@@ -76,13 +76,15 @@ bool UUW_ShopLayout::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEv
 {
 	Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
 	bool bDrop = false;
-	//这里就是放下的操作了
+	//当物品别拖放在布局中时，实际上可以理解成用户想要丢弃该物品，但是我们这里还没有实现将物品生成为实物的功能
+	//所以我们这里只是将其重新显示出来，而不做其他操作
 	if (const UDragDropOperation* InDragDropOperation = Cast<UDragDropOperation>(InOperation))
 	{
 		if (const UUW_ItemSlotBase* DraggedSlot = Cast<UUW_ItemSlotBase>(InDragDropOperation->Payload)) {
 			DraggedSlot->ShowIcon(true);
 			bDrop = true;
 		}
+		//如果需求是让用户丢弃物品，我们可以将物品删除，然后广播一个丢弃物品的消息，让监听消息的开发者生成该物品的3D对象实例
 	}
 	return bDrop;
 }

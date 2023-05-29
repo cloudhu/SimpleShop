@@ -137,18 +137,18 @@ void UShopSubsystem::Deinitialize()
 
 void UShopSubsystem::OnNotificationTransactionMessage(FGameplayTag Channel, const FConfirmedTransactionMessage& Notification)
 {
-	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
+	//声明交易消息结果,这个结果是返回给交易双方的消息
 	FTransactionMessageResult ResultMessage;
 	ResultMessage.Buyer = Notification.Buyer;
 	ResultMessage.Seller = Notification.Seller;
 	ResultMessage.ItemID = Notification.ItemID;
 	ResultMessage.Amount = Notification.Count;
-
-	if (UWalletActorComponent* BuyerWallet = FindWalletActorComponent(Notification.Buyer)) //找到买家
+	//找到买家的钱包
+	if (UWalletActorComponent* BuyerWallet = FindWalletActorComponent(Notification.Buyer)) 
 	{
 		int32 Cost = Notification.Price; //Todo:这些在服务器上进行
 		if (Notification.bIsCompoundItem)
-		{
+		{//如果是合成物品，则需要另外计算价格
 			Cost = CalculateCompoundItemCost(GetSlotTableByID(Notification.ItemID), Notification.Buyer, true);
 		}
 
@@ -171,28 +171,34 @@ void UShopSubsystem::OnNotificationTransactionMessage(FGameplayTag Channel, cons
 		}
 	}
 
-	if (Notification.bIsQuickBarItem)
+	//买家支付成功之后，需要把钱转给卖家，如果卖家是空指针，代表是系统回收行为
+	if (Notification.Seller)
 	{
-		if (UQuickBarComponent* QuickBar = UQuickBarComponent::FindQuickBarComponent(Notification.Seller))
+		if (UWalletActorComponent* SellerWallet = FindWalletActorComponent(Notification.Seller)) //找到卖家
 		{
-			QuickBar->RemoveItemFromSlot(Notification.InstanceIndex);
+			SellerWallet->Transaction(Notification.Price); //给卖家钱包进行收入
+			//交易消息:成功
+			ResultMessage.bSuccess = true;
 		}
-	}
-	else
-	{
-		//从卖家的背包中移除物品
-		if (UInventoryManagerActorComponent* InventoryManager = FindInventoryManagerActorComponent(Notification.Seller))
-		{
-			InventoryManager->RemoveItemByIndex(Notification.InstanceIndex, Notification.Count);
-		}
-	}
 
-	if (UWalletActorComponent* SellerWallet = FindWalletActorComponent(Notification.Seller)) //找到卖家
-	{
-		SellerWallet->Transaction(Notification.Price); //给卖家钱包进行收入
-		//交易消息:成功
-		ResultMessage.bSuccess = true;
+		if (Notification.bIsQuickBarItem)//是否是快捷栏的物品，如果是快捷栏的物品则需要从快捷栏移除
+			{
+			if (UQuickBarComponent* QuickBar = UQuickBarComponent::FindQuickBarComponent(Notification.Seller))
+			{
+				QuickBar->RemoveItemFromSlot(Notification.InstanceIndex);
+			}
+			}
+		else
+		{
+			//从卖家的背包中移除物品
+			if (UInventoryManagerActorComponent* InventoryManager = FindInventoryManagerActorComponent(Notification.Seller))
+			{
+				InventoryManager->RemoveItemByIndex(Notification.InstanceIndex, Notification.Count);
+			}
+		}
 	}
+	//广播交易消息结果
+	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 	MessageSystem.BroadcastMessage(TAG_Transaction_Message_Result, ResultMessage);
 }
 

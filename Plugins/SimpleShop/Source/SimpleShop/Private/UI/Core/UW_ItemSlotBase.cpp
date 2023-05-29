@@ -117,7 +117,7 @@ void UUW_ItemSlotBase::UpdateSlot(const FItemTable* InTable)
 
 void UUW_ItemSlotBase::TransactionResult(const bool bSuccess, const int32 InAmount)
 {
-	if (!bSuccess)
+	if (!bSuccess)//出售成功时物品已经移除，所以不需要做什么，交易失败时则需要重新回复物品
 	{
 		SetItemIsEnabled(true);
 	}
@@ -154,8 +154,9 @@ void UUW_ItemSlotBase::BroadcastTransactionMessage() const
 {
 	//交易消息声明
 	FTransactionMessage TransactionMessage;
-	TransactionMessage.Buyer = GetItemOwner(); //交易时,物品所有者被设置成触发交易的角色
-	TransactionMessage.Seller = GetOwningPlayerPawn();
+	//交易时,物品所有者被设置成触发交易的角色
+	TransactionMessage.Buyer = GetOwningPlayerPawn(); 
+	TransactionMessage.Seller = GetItemOwner();
 	TransactionMessage.ItemID = GetItemID();
 	TransactionMessage.InstanceID = GetInstanceIndex();
 	TransactionMessage.Price = GetPrice() * 0.5f;
@@ -243,7 +244,7 @@ void UUW_ItemSlotBase::SetNumText(const int32 InNum)
 void UUW_ItemSlotBase::NativeConstruct()
 {
 	Super::NativeConstruct();
-
+	//动态绑定物品按钮的点击事件
 	ItemButton->OnClicked.AddDynamic(this, &ThisClass::OnClickedWidget);
 	//监听交易消息: 0.获取游戏消息子系统
 	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());

@@ -155,17 +155,18 @@ bool UUW_QuickBarItem::NativeOnDrop(const FGeometry& InGeometry, const FDragDrop
 {
 	Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
 	bool bDrop = false;
-	//这里就是放下的操作了,如果是背包内的拖拽,那么可以理解成两个背包格子之间的交换位置
+	//处理物品放置操作
 	if (const UDragDropOperation* InDragDropOperation = Cast<UDragDropOperation>(InOperation))
 	{
 		if (const UUW_InventoryItem* DraggedInventorySlot = Cast<UUW_InventoryItem>(InDragDropOperation->Payload))
 		{
-			//现在只支持背包格子之间的拖拽
+			//上述判断表明物品是从背包拖拽放到快捷栏的
 			if (UInventoryManagerActorComponent* InventoryComponent = UInventoryManagerActorComponent::FindInventoryManagerComponent(GetOwningPlayerPawn()))
 			{
-				//获取背包组件
+				//获取背包组件和快捷栏组件
 				if (UQuickBarComponent* QuickBar = UQuickBarComponent::FindQuickBarComponent(GetOwningPlayerPawn()))
 				{
+					//将物品从背包移除，然后添加到快捷栏中
 					UItemInstance* Result = InventoryComponent->GetItemByIndex(DraggedInventorySlot->GetInstanceIndex());
 					InventoryComponent->RemoveItemByIndex(DraggedInventorySlot->GetInstanceIndex(), DraggedInventorySlot->GetAmount());
 					QuickBar->AddItemToSlot(GetInstanceIndex(), Result);
@@ -176,6 +177,7 @@ bool UUW_QuickBarItem::NativeOnDrop(const FGeometry& InGeometry, const FDragDrop
 		}
 		else if (const UUW_QuickBarItem* DraggedSlot = Cast<UUW_QuickBarItem>(InDragDropOperation->Payload))
 		{
+			//如果是从快捷栏的一个格子拖放到另外一个格子，只需要交换两者之间的数据即可
 			if (UQuickBarComponent* QuickBar = UQuickBarComponent::FindQuickBarComponent(GetOwningPlayerPawn()))
 			{
 				QuickBar->SwapItemSlot(GetInstanceIndex(), DraggedSlot->GetInstanceIndex());

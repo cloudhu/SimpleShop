@@ -145,7 +145,7 @@ bool UUW_ShopView::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEven
 {
 	Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
 	bool bDrop = false;
-	//这里就是放下的操作了
+	//当物品被拖放在商店界面时，就广播交易的消息即可
 	if (const UDragDropOperation* InDragDropOperation = Cast<UDragDropOperation>(InOperation))
 	{
 		if (const UUW_ItemSlotBase* DraggedSlot = Cast<UUW_ItemSlotBase>(InDragDropOperation->Payload))

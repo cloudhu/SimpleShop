@@ -17,13 +17,14 @@ UShopActorComponent::UShopActorComponent(const FObjectInitializer& ObjectInitial
 
 void UShopActorComponent::OnNotificationTransactionMessage(FGameplayTag Channel, const FTransactionMessage& Notification)
 {
+	//缓存消息，以备后用
 	CacheNotification = Notification;
 	//弹出确认窗口
 	ConfirmWindow->SetVisibility(ESlateVisibility::Visible);
 	
 	if (Notification.Buyer == GetPawnChecked<APawn>())//如果是买家
 	{
-		if (Notification.bIsCompoundItem)//合成物品
+		if (Notification.bIsCompoundItem)//是否是合成物品
 		{
 			ConfirmWindow->SetTitle(FText::Format(NSLOCTEXT("ConfirmWindow", "Title", "Confirm Compound at Price:{0}"), Notification.Price));
 		}
@@ -44,6 +45,7 @@ void UShopActorComponent::OnNotificationTransactionMessage(FGameplayTag Channel,
 
 void UShopActorComponent::ConfirmAction(const int32 Count) const
 {
+	//声明确认消息，并且填充缓存的交易信息
 	FConfirmedTransactionMessage ConfirmedMessage;
 	ConfirmedMessage.Buyer = CacheNotification.Buyer;
 	ConfirmedMessage.Seller = CacheNotification.Seller;
@@ -53,6 +55,7 @@ void UShopActorComponent::ConfirmAction(const int32 Count) const
 	ConfirmedMessage.ItemID = CacheNotification.ItemID;
 	ConfirmedMessage.bIsQuickBarItem = CacheNotification.bIsQuickBarItem;
 	ConfirmedMessage.bIsCompoundItem = CacheNotification.bIsCompoundItem;
+	//广播确认交易的消息
 	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 	MessageSystem.BroadcastMessage(TAG_ConfirmedTransaction_Message, ConfirmedMessage);
 }

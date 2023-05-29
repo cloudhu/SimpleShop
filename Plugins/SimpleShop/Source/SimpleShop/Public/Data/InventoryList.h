@@ -52,8 +52,7 @@ struct FInventoryList : public FFastArraySerializer
 {
 	GENERATED_BODY()
 
-	FInventoryList()
-		: OwnerComponent(nullptr)
+	FInventoryList(): OwnerComponent(nullptr)
 	{
 	}
 
@@ -73,6 +72,7 @@ struct FInventoryList : public FFastArraySerializer
 	 * @param InTag 目标物品的标签
 	 */
 	void UpdateTaggedItems(const FGameplayTag& InTag) const;
+
 public:
 	//~FFastArraySerializer contract 数组序列化加速器 合约
 	void PreReplicatedRemove(const TArrayView<int32> RemovedIndices, int32 FinalSize);
@@ -107,7 +107,7 @@ public:
 	 * @param InInstanceIndex 物品实例编号
 	 * @param InCount 数量
 	 */
-	void RemoveEntryByIndex(const int32 InInstanceIndex,const int32 InCount = INDEX_NONE);
+	void RemoveEntryByIndex(const int32 InInstanceIndex, const int32 InCount = INDEX_NONE);
 
 	/**
 	 * @brief 获取指定索引的实例
@@ -123,14 +123,14 @@ public:
 	 * @param GuidA 全局唯一编号A
 	 * @param GuidB 全局唯一编号B
 	 */
-	void SwapEntry(const int32 IndexA, const int32 IndexB,const FGuid GuidA,const FGuid GuidB);
+	void SwapEntry(const int32 IndexA, const int32 IndexB, const FGuid GuidA, const FGuid GuidB);
 
 	/**
 	 * @brief 将物品实例移动到指定的索引
 	 * @param Guid 物品唯一编号
 	 * @param Index 在背包UI中的索引
 	 */
-	void MoveInstanceToIndex(const FGuid Guid,const int32 Index);
+	void MoveInstanceToIndex(const FGuid Guid, const int32 Index);
 
 	/**
 	 * @brief 是否可以添加物品
@@ -179,6 +179,7 @@ public:
 	 * @return 容量
 	 */
 	int32 GetInventoryMaxVolume() const;
+
 private:
 	/**
 	 * @brief 广播背包变化消息
