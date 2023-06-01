@@ -4,6 +4,7 @@
 
 void UUW_UpgradeConfirm::ConfirmAction()
 {
+	//如果确认代理绑定了就执行，然后隐藏确认窗口
 	if (ConfirmDelegate.ExecuteIfBound())
 	{
 		SetVisibility(ESlateVisibility::Collapsed);

@@ -81,10 +81,20 @@ public:
 	//交易消息通知
 	void OnNotificationCompoundMessage(FGameplayTag Channel, const FUserInterfaceMessage& Notification);
 protected:
-	//获取深度
+	/**
+	 * @brief 获取深度
+	 * @param InTable 物品数据 
+	 * @param InDepth 当前深度
+	 * @return 深度
+	 */
 	int32 GetLayerDepth(const FItemTable* InTable, int32 InDepth = 1);
 
-	//递归更新
+	/**
+	 * @brief 递归更新
+	 * @param InTable 物品数据
+	 * @param InStartPosition 起始位置
+	 * @param InSlotLayer 深度层级
+	 */
 	void RecursiveUpdateSlot(const FItemTable* InTable, const FVector2D& InStartPosition, FSlotLayer InSlotLayer);
 
 	virtual void NativeDestruct() override;

@@ -77,7 +77,7 @@ UItemCompoundPanel::UItemCompoundPanel(const FObjectInitializer& ObjectInitializ
 void UItemCompoundPanel::NativeConstruct()
 {
 	Super::NativeConstruct();
-	//监听钱包发出的货币变更消息
+	//监听合成物品的消息
 	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 	ListenerHandle = MessageSystem.RegisterListener(TAG_Item_Message_Compound, this, &ThisClass::OnNotificationCompoundMessage);
 }
@@ -103,7 +103,7 @@ void UItemCompoundPanel::UpdateSlot(const FItemTable* InTable)
 					InPanelSlot->SetSize(IconSize);
 					InPanelSlot->SetAlignment(FVector2D(0.5f, 0.f));
 					InPanelSlot->SetPosition(StartPostion);
-
+					//递归更新
 					RecursiveUpdateSlot(InTable, StartPostion, --InLayer);
 				}
 				//4.根据数据更新物品信息
@@ -119,18 +119,21 @@ void UItemCompoundPanel::UpdateSlot(const FItemTable* InTable)
 void UItemCompoundPanel::OnNotificationCompoundMessage(FGameplayTag Channel, const FUserInterfaceMessage& Notification)
 {
 	if (Notification.Owner == GetOwningPlayerPawn())
-	{
+	{	//如果物品编号是-1就隐藏起来
 		if (Notification.ItemID == INDEX_NONE)
 		{
 			SetVisibility(ESlateVisibility::Hidden);
 		}
 		else
 		{
+			//显示合成面板
 			SetVisibility(ESlateVisibility::Visible);
 
+			//通过商店子系统获取物品的数据
 			UShopSubsystem& ShopSubsystem = UShopSubsystem::Get(GetWorld());
 			if (const FItemTable* InSlotTable = ShopSubsystem.GetSlotTableByID(Notification.ItemID))
 			{
+				//通过物品数据更新合成面板
 				UpdateSlot(InSlotTable);
 			}
 		}
@@ -143,6 +146,7 @@ int32 UItemCompoundPanel::GetLayerDepth(const FItemTable* InTable, int32 InDepth
 	//递归物品数据中的子类数组,获得楼层
 	TArray<int32> Depths;
 	TArray<int32> Children;
+	//通过物品定义接口来获取物品子集
 	if (const UObject* Src = GetDefault<UObject>(InTable->ItemDefinition))
 	{
 		if (const IItemDefinitionInterface* ItemDef = Cast<IItemDefinitionInterface>(Src))
@@ -154,7 +158,7 @@ int32 UItemCompoundPanel::GetLayerDepth(const FItemTable* InTable, int32 InDepth
 			Children = IItemDefinitionInterface::GetChildrenIds(Src);
 		}
 	}
-
+	//通过商店子系统查找子集物品的数据，继续递归获取
 	UShopSubsystem& ShopSubsystem = UShopSubsystem::Get(GetWorld());
 
 	for (const auto& Tmp : Children)
@@ -180,6 +184,7 @@ void UItemCompoundPanel::RecursiveUpdateSlot(const FItemTable* InTable, const FV
 {
 	//0.合成物品所需的数量,这里渲染整个合成图谱的思路就是先生成合成所需的素材,然后再来布局.这种思路就像是拼图一样,先有各种碎片,再根据碎片来拼凑完整的图像
 	TArray<int32> Children;
+	//通过物品定义接口获取物品的子集
 	if (const UObject* Src = GetDefault<UObject>(InTable->ItemDefinition))
 	{
 		if (const IItemDefinitionInterface* ItemDef = Cast<IItemDefinitionInterface>(Src))
@@ -191,9 +196,9 @@ void UItemCompoundPanel::RecursiveUpdateSlot(const FItemTable* InTable, const FV
 			Children = IItemDefinitionInterface::GetChildrenIds(Src);
 		}
 	}
-
+	//基础物品的数量
 	const int32 NumberChildren = Children.Num();
-	//1.画格子的Lambda函数,关于Lambda函数大家可以百度去了解一下,这里的复杂度已经很高了,所以不做科普了
+	//1.画格子的Lambda函数
 	FDrawSlot DrawSlot;
 	auto SpawnSlot = [&](TArray<FDrawSlot::FSlot>& PanelSlots, UTexture2D* InTexture2D, const int32 InLayer = 1)
 	{

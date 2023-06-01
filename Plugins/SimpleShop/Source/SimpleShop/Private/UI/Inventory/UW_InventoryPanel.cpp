@@ -25,6 +25,7 @@ void UUW_InventoryPanel::NativeConstruct()
 	WalletListenerHandle = MessageSystem.RegisterListener(TAG_Wallet_Message_GoldChanged, this, &ThisClass::OnWalletChangeMessage);
 	GravityListenerHandle = MessageSystem.RegisterListener(TAG_Inventory_Gravity_Message, this, &ThisClass::OnInventoryGravityMessage);
 	MaxGravityListenerHandle = MessageSystem.RegisterListener(TAG_Inventory_MaxGravity_Message, this, &ThisClass::OnInventoryMaxGravityMessage);
+	//监听背包已扩展的消息
 	ExpandListenerHandle = MessageSystem.RegisterListener(TAG_Inventory_Expanded_Message, this, &ThisClass::OnInventoryExpandMessage);
 	//ItemChangeListenerHandle = MessageSystem.RegisterListener(TAG_Inventory_Message_StackChanged, this, &ThisClass::OnItemStackChanged);
 
@@ -47,6 +48,7 @@ void UUW_InventoryPanel::NativeConstruct()
 	}
 
 	Button_Close->OnClicked.AddDynamic(this, &ThisClass::OnCloseInventory);
+	//绑定扩展背包按钮点击事件
 	ButtonExpand->OnClicked.AddDynamic(this,&ThisClass::ExpandInventory);
 	if (ListCategory)
 	{
@@ -119,6 +121,7 @@ void UUW_InventoryPanel::OnInventoryExpandMessage(FGameplayTag Channel, const FI
 	if (Notification.InventoryOwner == GetOwningPlayerPawn())
 	{
 		const int32 Index = TileView_ItemList->GetNumItems();
+		//循环生成对应数量的格子，从而达到扩容的目标
 		for (int i = Index; i < Index + Notification.Delta; ++i)
 		{
 			UItemInstance* Instance = NewObject<UItemInstance>(GetOwningPlayerPawn());
@@ -126,6 +129,7 @@ void UUW_InventoryPanel::OnInventoryExpandMessage(FGameplayTag Channel, const FI
 			TileView_ItemList->AddItem(Instance);
 		}
 	}
+	//更新物品列表
 	UpdateItemListByTag(CacheTag);
 }
 
@@ -146,15 +150,21 @@ void UUW_InventoryPanel::OnCloseInventory()
 
 void UUW_InventoryPanel::ExpandInventory()
 {
+	//获取背包管理组件
 	if (UInventoryManagerActorComponent* InventoryManager = UInventoryManagerActorComponent::FindInventoryManagerComponent(GetOwningPlayerPawn()))
 	{
+		//判断背包是否满足扩容的条件
 		if (InventoryManager->CanExpandInventory())
 		{
 			InventoryManager->UpgradeInventory();
+			//背包升级之后，再次判断能否扩容，无法扩容则隐藏扩展按钮
+			if (!InventoryManager->CanExpandInventory())
+			{
+				ButtonExpand->SetVisibility(ESlateVisibility::Collapsed);
+			}
 		}
-		
-		if (!InventoryManager->CanExpandInventory())
-		{
+		else
+		{//无法扩容则隐藏扩展按钮
 			ButtonExpand->SetVisibility(ESlateVisibility::Collapsed);
 		}
 	}

@@ -17,7 +17,7 @@ void UUW_InventoryItem::OnClickedWidget()
 	FTransactionMessage TransactionMessage;
 	//交易时,买家暂时是空，物品所有者被设置成卖家
 	TransactionMessage.Buyer = nullptr; 
-	TransactionMessage.Seller = GetItemOwner();
+	TransactionMessage.Seller = GetOwningPlayerPawn();
 	TransactionMessage.ItemID = GetItemID();
 	TransactionMessage.InstanceID = GetInstanceIndex();
 	TransactionMessage.Price = GetPrice() * 0.5f;

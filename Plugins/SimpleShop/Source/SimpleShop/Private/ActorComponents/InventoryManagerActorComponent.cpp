@@ -213,11 +213,13 @@ void UInventoryManagerActorComponent::InitializeInventory()
 
 void UInventoryManagerActorComponent::UpgradeInventory()
 {
+	//升级背包前需要弹出确认窗口
 	if (!ConfirmWindow)
-	{
+	{//如果没有现成的确认窗口，则通过升级确认类创建一个确认窗口
 		if (UpgradeConfirmClass)
 		{
 			ConfirmWindow = CreateWidget<UUW_UpgradeConfirm>(GetController<APlayerController>(), UpgradeConfirmClass);
+			//将确认窗口添加到视口
 			ConfirmWindow->AddToViewport(10);
 			ConfirmWindow->SetDesiredSizeInViewport(ConfirmWindow->GetDesiredSize());
 			FAnchors Anchors;
@@ -225,6 +227,7 @@ void UInventoryManagerActorComponent::UpgradeInventory()
 			Anchors.Maximum = FVector2d(0.5f);
 			ConfirmWindow->SetAnchorsInViewport(Anchors);
 			ConfirmWindow->SetAlignmentInViewport(FVector2d(0.5f));
+			//这里使用了代理绑定对象
 			ConfirmWindow->ConfirmDelegate.BindUObject(this, &UInventoryManagerActorComponent::ConfirmUpgradeInventory);
 			ConfirmWindow->bIsFocusable = true;
 		}
@@ -233,6 +236,7 @@ void UInventoryManagerActorComponent::UpgradeInventory()
 			return;
 		}
 	}
+	//设置并显示确认窗口
 	ConfirmWindow->SetCurrentLevel(Level);
 	ConfirmWindow->SetPrice(UpgradeCost);
 	ConfirmWindow->SetVisibility(ESlateVisibility::Visible);
@@ -241,13 +245,17 @@ void UInventoryManagerActorComponent::UpgradeInventory()
 
 void UInventoryManagerActorComponent::ConfirmUpgradeInventory()
 {
+	//获取钱包组件，判断是否足够支付升级费用
 	if (UWalletActorComponent* WalletActorComponent = UWalletActorComponent::FindWalletActorComponent(GetPawn<APawn>()))
 	{
 		if (WalletActorComponent->CanAfford(UpgradeCost))
 		{
+			//如果钱包有充足的资金，那么就进行升级费用的交易
 			if (WalletActorComponent->Transaction(UpgradeCost, false))
 			{
+				//背包升级
 				Level++;
+				//更新背包配置
 				UpdateInventoryConfig();
 			}
 		}
@@ -260,8 +268,11 @@ void UInventoryManagerActorComponent::UpdateInventoryConfig()
 	//Use ShopSubsystem 读取配置表 更新背包数据
 	UShopSubsystem& ShopSubsystem = UShopSubsystem::Get(GetWorld());
 	const FInventoryConfiguration* Configuration = ShopSubsystem.GetInventoryConfigurationByLevel(Level);
+	//背包扩容
 	ExpandVolume(Configuration->AddedVolume);
+	//增加背包最大负重
 	AddMaxGravity(Configuration->MaxGravity);
+	//更新背包的升级费用和最大等级
 	UpgradeCost = Configuration->UpgradeCost;
 	MaxLevel = ShopSubsystem.GetMaxInventoryLevel();
 }

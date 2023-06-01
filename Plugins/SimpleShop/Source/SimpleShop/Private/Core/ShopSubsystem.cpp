@@ -11,7 +11,7 @@ UShopSubsystem::UShopSubsystem()
 	static ConstructorHelpers::FObjectFinder<UDataTable> Slot_Table(TEXT("/SimpleShop/Data/DT_ShopItems"));
 	SlotTablePtr = Slot_Table.Object;
 
-	//1.背包格子 DataTable'/SimpleShop/Data/DT_InventoryConfigs.DT_InventoryConfigs'
+	//1.背包配置数据资产路径 DataTable'/SimpleShop/Data/DT_InventoryConfigs.DT_InventoryConfigs'
 	static ConstructorHelpers::FObjectFinder<UDataTable> Inventory_Table(TEXT("/SimpleShop/Data/DT_InventoryConfigs"));
 	InventoryTablePtr = Inventory_Table.Object;
 
