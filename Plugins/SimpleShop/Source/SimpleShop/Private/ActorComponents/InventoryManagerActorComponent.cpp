@@ -229,7 +229,6 @@ void UInventoryManagerActorComponent::UpgradeInventory()
 			ConfirmWindow->SetAlignmentInViewport(FVector2d(0.5f));
 			//这里使用了代理绑定对象
 			ConfirmWindow->ConfirmDelegate.BindUObject(this, &UInventoryManagerActorComponent::ConfirmUpgradeInventory);
-			ConfirmWindow->bIsFocusable = true;
 		}
 		else
 		{

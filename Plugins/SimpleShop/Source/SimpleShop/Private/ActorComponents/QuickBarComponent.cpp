@@ -131,7 +131,6 @@ void UQuickBarComponent::OnExpandQuickBar()
 			ConfirmWindow->SetAlignmentInViewport(FVector2d(0.5f));
 			//ConfirmWindow->SetPositionInViewport(FVector2d(0.f));
 			ConfirmWindow->ConfirmDelegate.BindUObject(this, &UQuickBarComponent::ConfirmUpgradeQuickBar);
-			ConfirmWindow->bIsFocusable = true;
 		}
 	}
 	ConfirmWindow->SetCurrentLevel(Level);
@@ -203,7 +202,7 @@ void UQuickBarComponent::EquipItemInSlot()
 
 	if (UItemInstance* SlotItem = Slots[ActiveSlotIndex])
 	{
-		SendEquipItemMessage(SlotItem,true);
+		SendEquipItemMessage(SlotItem, true);
 	}
 }
 
@@ -213,7 +212,7 @@ void UQuickBarComponent::UnEquipItemInSlot()
 	{
 		if (UItemInstance* SlotItem = Slots[ActiveSlotIndex])
 		{
-			SendEquipItemMessage(SlotItem,false);
+			SendEquipItemMessage(SlotItem, false);
 		}
 	}
 }

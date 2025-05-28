@@ -21,6 +21,7 @@ void UUW_UpgradeConfirm::NativeConstruct()
 	Super::NativeConstruct();
 	ConfirmButton->OnClicked.AddDynamic(this, &ThisClass::ConfirmAction);
 	CancelButton->OnClicked.AddDynamic(this, &ThisClass::CancelAction);
+	SetIsFocusable(true);
 }
 
 void UUW_UpgradeConfirm::SetCurrentLevel(const int32 InLevel) const
