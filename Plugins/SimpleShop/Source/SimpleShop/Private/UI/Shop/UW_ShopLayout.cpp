@@ -8,9 +8,8 @@
 #include "UI/Shop/ItemCompoundPanel.h"
 
 UUW_ShopLayout::UUW_ShopLayout(const FObjectInitializer& ObjectInitializer)
-	:Super(ObjectInitializer)
+	: Super(ObjectInitializer)
 {
-
 }
 
 void UUW_ShopLayout::NativeConstruct()
@@ -31,13 +30,13 @@ void UUW_ShopLayout::ShowShop(APawn* InOwner, bool bVisible /*= true*/)
 
 		if (bVisible)
 		{
-			ShopPtr->SetVisibility(ESlateVisibility::Visible);
-			InventoryPanel->SetVisibility(ESlateVisibility::Visible);
+			InventoryPanel->OnPanelOpen();
+			ShopPtr->OnPanelOpen();
 			SetVisibility(ESlateVisibility::Visible);
 		}
 		else
 		{
-			ShopPtr->SetVisibility(ESlateVisibility::Hidden);
+			ShopPtr->OnPanelClose();
 			ConfirmWindow->SetVisibility(ESlateVisibility::Hidden);
 			CompoundPanel->SetVisibility(ESlateVisibility::Hidden);
 		}
@@ -50,12 +49,12 @@ void UUW_ShopLayout::ShowInventory(bool bVisible /*= true*/)
 	{
 		if (bVisible)
 		{
-			InventoryPanel->SetVisibility(ESlateVisibility::Visible);
+			InventoryPanel->OnPanelOpen();
 			SetVisibility(ESlateVisibility::Visible);
 		}
 		else
 		{
-			InventoryPanel->SetVisibility(ESlateVisibility::Hidden);
+			InventoryPanel->OnCloseInventory();
 		}
 	}
 }
@@ -80,7 +79,8 @@ bool UUW_ShopLayout::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEv
 	//所以我们这里只是将其重新显示出来，而不做其他操作
 	if (const UDragDropOperation* InDragDropOperation = Cast<UDragDropOperation>(InOperation))
 	{
-		if (const UUW_ItemSlotBase* DraggedSlot = Cast<UUW_ItemSlotBase>(InDragDropOperation->Payload)) {
+		if (const UUW_ItemSlotBase* DraggedSlot = Cast<UUW_ItemSlotBase>(InDragDropOperation->Payload))
+		{
 			DraggedSlot->ShowIcon(true);
 			bDrop = true;
 		}

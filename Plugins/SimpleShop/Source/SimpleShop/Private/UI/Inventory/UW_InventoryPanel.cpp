@@ -145,7 +145,7 @@ void UUW_InventoryPanel::SetTextNum(UTextBlock* TextSrc, const float InNum) cons
 
 void UUW_InventoryPanel::OnCloseInventory()
 {
-	SetVisibility(ESlateVisibility::Hidden);
+	OnPanelClose();
 }
 
 void UUW_InventoryPanel::ExpandInventory()

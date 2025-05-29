@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+#include "UW_PanelBase.h"
 #include "ActorComponents/ShopActorComponent.h"
 #include "UW_ShopUIBase.generated.h"
 
@@ -11,7 +11,7 @@
  * 商店UI基类
  */
 UCLASS(Abstract, editinlinenew, BlueprintType, Blueprintable)
-class SIMPLESHOP_API UUW_ShopUIBase : public UUserWidget
+class SIMPLESHOP_API UUW_ShopUIBase : public UUW_PanelBase
 {
 	GENERATED_BODY()
 	

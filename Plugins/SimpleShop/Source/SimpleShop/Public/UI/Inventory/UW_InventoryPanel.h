@@ -5,12 +5,12 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "ActorComponents/InventoryManagerActorComponent.h"
-#include "Blueprint/UserWidget.h"
 #include "Components/TileView.h"
 #include "GameFramework/GameplayMessageSubsystem.h"
 #include "Message/GlobalNativeTags.h"
 #include "Message/TransactionMessage.h"
 #include "Message/UserInterfaceMessage.h"
+#include "UI/Core/UW_PanelBase.h"
 #include "UW_InventoryPanel.generated.h"
 
 class UButton;
@@ -19,7 +19,7 @@ class UTextBlock;
  * 背包面板
  */
 UCLASS(Blueprintable, BlueprintType)
-class SIMPLESHOP_API UUW_InventoryPanel : public UUserWidget
+class SIMPLESHOP_API UUW_InventoryPanel : public UUW_PanelBase
 {
 	GENERATED_BODY()
 
@@ -67,7 +67,7 @@ public:
 	 */
 	UPROPERTY(BlueprintReadOnly, Category = InventoryPanel, meta = (BindWidget))
 	UTextBlock* Text_MaxGravity;
-public:
+	
 	virtual void NativeConstruct() override;
 	
 	virtual void NativeDestruct() override;
@@ -154,6 +154,10 @@ public:
 	
 	UFUNCTION(BlueprintCallable,Category=InventoryPanel, BlueprintPure = false)
 	void OnItemClicked(UObject* Item);
+
+	/**
+	 * @brief 扩展背包
+	 */
 private:
 	/**
 	 * @brief 目录点击消息监听句柄
