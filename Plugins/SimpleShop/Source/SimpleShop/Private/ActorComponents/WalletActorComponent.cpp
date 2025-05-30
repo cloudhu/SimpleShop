@@ -58,4 +58,5 @@ void UWalletActorComponent::BroadcastGoldChangeMessage(int32 OldNum, int32 NewNu
 void UWalletActorComponent::BeginPlay()
 {
 	Super::BeginPlay();
+	BroadcastGoldChangeMessage(0, Gold);
 }

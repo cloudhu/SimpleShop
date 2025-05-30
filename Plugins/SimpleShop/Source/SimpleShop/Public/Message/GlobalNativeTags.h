@@ -7,26 +7,26 @@
 #include "GlobalNativeTags.generated.h"
 
 //声明插件日志的类别
-DECLARE_LOG_CATEGORY_EXTERN(LogSimpleShop,Log,All);
+DECLARE_LOG_CATEGORY_EXTERN(LogSimpleShop, Log, All);
 
 //////////物品目录的标签声明///////////////
-UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_All);//所有类型
-UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_Basic);//基础
-UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_Epic);//史诗
-UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_Legendary);//传奇
-UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_Mythic);//神话
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_All); //所有类型
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_Basic); //基础
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_Epic); //史诗
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_Legendary); //传奇
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_Mythic); //神话
 
-UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_Consumables);//消耗品
-UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_AuxiliaryProps);//辅助品
-UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_PhysicalAttack);//物理攻击
-UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_MagicAttack);//魔法攻击
-UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_PhysicalPenetration);//物理穿透
-UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_MagicPenetration);//魔法穿透
-UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_Crit);//暴击
-UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_Armor);//护甲
-UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_MagicResistance);//魔法抗性
-UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_AttackSpeed);//攻击速度
-UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_Shoes);//鞋类
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_Consumables); //消耗品
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_AuxiliaryProps); //辅助品
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_PhysicalAttack); //物理攻击
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_MagicAttack); //魔法攻击
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_PhysicalPenetration); //物理穿透
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_MagicPenetration); //魔法穿透
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_Crit); //暴击
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_Armor); //护甲
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_MagicResistance); //魔法抗性
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_AttackSpeed); //攻击速度
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_Shoes); //鞋类
 
 //可合成的物品
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Item_Type_Compoundable);
@@ -63,6 +63,7 @@ UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Wallet_Message_GoldChanged);
 
 //背包物品数量发生改变时发消息通知
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Inventory_Message_StackChanged);
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Inventory_Message_Interaction);
 
 //快捷栏消息标签
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_QuickBar_Message_SlotsChanged);
@@ -75,5 +76,27 @@ struct FGlobalNativeTags
 {
 	GENERATED_USTRUCT_BODY()
 
-		FGlobalNativeTags();
+	FGlobalNativeTags();
 };
+
+namespace Debug
+{
+	static void Print(const FString& Message, const FColor& Color = FColor::MakeRandomColor(), const int32 InKey = -1)
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(InKey, 5.f, Color, Message);
+			UE_LOG(LogSimpleShop, Warning, TEXT("%s"), *Message);
+		}
+	}
+
+	static void Print(const FString& Message, const float FloatValue, const FColor& Color = FColor::MakeRandomColor(), const int32 InKey = -1)
+	{
+		if (GEngine)
+		{
+			const FString FinalMsg = Message + TEXT(": ") + FString::SanitizeFloat(FloatValue);
+			GEngine->AddOnScreenDebugMessage(InKey, 5.f, Color, FinalMsg);
+			UE_LOG(LogSimpleShop, Warning, TEXT("%s"), *FinalMsg);
+		}
+	}
+}

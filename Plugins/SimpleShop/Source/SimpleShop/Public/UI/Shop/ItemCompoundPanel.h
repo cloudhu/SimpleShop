@@ -3,9 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
 #include "GameFramework/GameplayMessageSubsystem.h"
 #include "Message/UserInterfaceMessage.h"
+#include "UI/Core/UW_PanelBase.h"
 #include "ItemCompoundPanel.generated.h"
 
 class UCanvasPanel;
@@ -47,7 +47,7 @@ struct FDrawItemLine
  * 合成面板
  */
 UCLASS(Blueprintable, BlueprintType)
-class SIMPLESHOP_API UItemCompoundPanel : public UUserWidget
+class SIMPLESHOP_API UItemCompoundPanel : public UUW_PanelBase
 {
 	GENERATED_BODY()
 

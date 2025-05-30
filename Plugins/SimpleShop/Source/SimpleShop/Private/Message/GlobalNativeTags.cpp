@@ -31,6 +31,7 @@ UE_DEFINE_GAMEPLAY_TAG(TAG_Item_Message_Compound, "Item.Message.Compound");
 
 //物品发生改变时发消息通知
 UE_DEFINE_GAMEPLAY_TAG(TAG_Inventory_Message_StackChanged, "Inventory.Message.StackChanged");
+UE_DEFINE_GAMEPLAY_TAG(TAG_Inventory_Message_Interaction, "Inventory.Message.Interaction");
 UE_DEFINE_GAMEPLAY_TAG(TAG_Inventory_Expanded_Message, "Inventory.Message.Expanded");
 UE_DEFINE_GAMEPLAY_TAG(TAG_Inventory_Gravity_Message, "Inventory.Message.Gravity");
 UE_DEFINE_GAMEPLAY_TAG(TAG_Inventory_MaxGravity_Message, "Inventory.Message.MaxGravity");

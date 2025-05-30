@@ -161,7 +161,7 @@ bool UUW_ShopView::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEven
 
 void UUW_ShopView::OnCloseWidget()
 {
-	SetVisibility(ESlateVisibility::Hidden);
+	OnPanelClose();
 
 	CloseCompoundPanel();
 }

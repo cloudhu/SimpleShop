@@ -51,7 +51,8 @@ bool UInventoryManagerActorComponent::CanAddItemDefinition(const TSubclassOf<UOb
 	{
 		if (const IItemDefinitionInterface* ItemDef = Cast<IItemDefinitionInterface>(Obj))
 		{
-			if ((GetTotalItemCountByDefinition(ItemClass) + StackCount) < ItemDef->Execute_GetMaxAmount(Obj) && GetRemainingGravity() >= ItemDef->Execute_GetGravity(Obj) *
+			if ((GetTotalItemCountByDefinition(ItemClass) + StackCount) < ItemDef->Execute_GetMaxAmount(Obj) && GetRemainingGravity() >= ItemDef->Execute_GetGravity(Obj)
+				*
 				StackCount)
 			{
 				return InventoryList.CanAddItem(ItemClass, StackCount);
@@ -72,6 +73,7 @@ bool UInventoryManagerActorComponent::CanAddItemDefinition(const TSubclassOf<UOb
 UItemInstance* UInventoryManagerActorComponent::AddItemDefinition(const TSubclassOf<UObject> ItemClass, const int32 InItemID, const int32 StackCount /*= 1*/)
 {
 	UItemInstance* Result = nullptr;
+	Debug::Print(FString::Printf(TEXT("AddItemDefinition(ItemClass, InItemID：%d, StackCount:%d);"), InItemID, StackCount));
 	if (ItemClass != nullptr && CanAddItemDefinition(ItemClass, StackCount))
 	{
 		//获取物品类的默认对象CDO
@@ -89,7 +91,7 @@ UItemInstance* UInventoryManagerActorComponent::AddItemDefinition(const TSubclas
 				//1.获取物品可叠加的数量
 				OverlyingCount = ItemDef->Execute_GetOverlyingAmount(Obj);
 				ItemGravity = ItemDef->Execute_GetGravity(Obj);
-			}//否则就需要判断其是否为蓝图实现
+			} //否则就需要判断其是否为蓝图实现
 			else if (Obj->Implements<UItemDefinitionInterface>())
 			{
 				//使用接口的静态方法来调用接口函数
@@ -215,7 +217,8 @@ void UInventoryManagerActorComponent::UpgradeInventory()
 {
 	//升级背包前需要弹出确认窗口
 	if (!ConfirmWindow)
-	{//如果没有现成的确认窗口，则通过升级确认类创建一个确认窗口
+	{
+		//如果没有现成的确认窗口，则通过升级确认类创建一个确认窗口
 		if (UpgradeConfirmClass)
 		{
 			ConfirmWindow = CreateWidget<UUW_UpgradeConfirm>(GetController<APlayerController>(), UpgradeConfirmClass);
@@ -347,6 +350,8 @@ void UInventoryManagerActorComponent::BroadcastCategoryMessage(const FGameplayTa
 	Message.ItemCategory = Category;
 	Message.NewNum = NewCount;
 	Message.Delta = NewCount - OldCount;
+
+	Debug::Print(InTag.ToString() + FString::Printf(TEXT("BroadcastCategoryMessage：NewCount:%d;"), NewCount));
 
 	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 	MessageSystem.BroadcastMessage(TAG_Inventory_Category_Message, Message);

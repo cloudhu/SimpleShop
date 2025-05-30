@@ -72,6 +72,7 @@ void UUW_ItemSlotBase::UpdateSlot(const FItemTable* InTable)
 	{
 		//相同的数据不需要更新
 		ShowIcon(true);
+		SetItemIsEnabled(true);
 		return;
 	}
 

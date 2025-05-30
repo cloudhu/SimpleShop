@@ -18,7 +18,7 @@ void UUW_ShopLayout::NativeConstruct()
 
 	if (CompoundPanel)
 	{
-		CompoundPanel->SetVisibility(ESlateVisibility::Hidden);
+		CompoundPanel->OnPanelClose();
 	}
 }
 
@@ -50,11 +50,13 @@ void UUW_ShopLayout::ShowInventory(bool bVisible /*= true*/)
 		if (bVisible)
 		{
 			InventoryPanel->OnPanelOpen();
+			InventoryPanel->UpdateItemListByTag(TAG_Item_Type_All);
 			SetVisibility(ESlateVisibility::Visible);
 		}
 		else
 		{
 			InventoryPanel->OnCloseInventory();
+			ShopPtr->OnPanelClose();
 		}
 	}
 }
