@@ -100,7 +100,7 @@ void UUW_ItemSlotBase::UpdateSlot(const FItemTable* InTable)
 				TipPtr->SetDisplayNameText(ItemDef->Execute_GetDisplayName(Obj));
 				TipPtr->SetDescribeText(ItemDef->Execute_GetIntroduction(Obj));
 				TipPtr->DisplayStats(ItemDef->Execute_GetStats(Obj), GetGuid());
-			}//蓝图实现则调用接口的静态方法
+			} //蓝图实现则调用接口的静态方法
 			else if (Obj->Implements<UItemDefinitionInterface>())
 			{
 				SetIconBrush(IItemDefinitionInterface::GetIconBrush(Obj));
@@ -118,7 +118,7 @@ void UUW_ItemSlotBase::UpdateSlot(const FItemTable* InTable)
 
 void UUW_ItemSlotBase::TransactionResult(const bool bSuccess, const int32 InAmount)
 {
-	if (!bSuccess)//出售成功时物品已经移除，所以不需要做什么，交易失败时则需要重新回复物品
+	if (!bSuccess) //出售成功时物品已经移除，所以不需要做什么，交易失败时则需要重新回复物品
 	{
 		SetItemIsEnabled(true);
 	}
@@ -156,7 +156,7 @@ void UUW_ItemSlotBase::BroadcastTransactionMessage() const
 	//交易消息声明
 	FTransactionMessage TransactionMessage;
 	//交易时,物品所有者被设置成触发交易的角色
-	TransactionMessage.Buyer = GetOwningPlayerPawn(); 
+	TransactionMessage.Buyer = GetOwningPlayerPawn();
 	TransactionMessage.Seller = GetItemOwner();
 	TransactionMessage.ItemID = GetItemID();
 	TransactionMessage.InstanceID = GetInstanceIndex();
@@ -245,12 +245,6 @@ void UUW_ItemSlotBase::SetNumText(const int32 InNum)
 void UUW_ItemSlotBase::NativeConstruct()
 {
 	Super::NativeConstruct();
-	//动态绑定物品按钮的点击事件
-	ItemButton->OnClicked.AddDynamic(this, &ThisClass::OnClickedWidget);
-	//监听交易消息: 0.获取游戏消息子系统
-	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
-	//1.通过游戏消息子系统注册监听交易结果的消息
-	TransactionMessageListenerHandle = MessageSystem.RegisterListener(TAG_Transaction_Message_Result, this, &ThisClass::OnNotificationTransactionResultMessage);
 }
 
 UWidget* UUW_ItemSlotBase::GetTip()
@@ -258,7 +252,7 @@ UWidget* UUW_ItemSlotBase::GetTip()
 	//如果没有缓存的指针，就创建一个
 	if (!TipPtr)
 	{
-		if (TipClass)//创建该部件必须要有对应的类
+		if (TipClass) //创建该部件必须要有对应的类
 		{
 			TipPtr = CreateWidget<UUW_ItemTips>(GetWorld(), TipClass);
 		}
@@ -280,6 +274,13 @@ void UUW_ItemSlotBase::NativeDestruct()
 void UUW_ItemSlotBase::NativeOnListItemObjectSet(UObject* ListItemObject)
 {
 	IUserObjectListEntry::NativeOnListItemObjectSet(ListItemObject);
+	// Debug::Print(FString::Printf(TEXT("--UUW_ItemSlotBase(NativeOnListItemObjectSet--ItemID：%d, NewCount:%d);"), GetInstanceIndex(), GetItemID()));
+	//动态绑定物品按钮的点击事件
+	ItemButton->OnClicked.AddDynamic(this, &ThisClass::OnClickedWidget);
+	//监听交易消息: 0.获取游戏消息子系统
+	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
+	//1.通过游戏消息子系统注册监听交易结果的消息
+	TransactionMessageListenerHandle = MessageSystem.RegisterListener(TAG_Transaction_Message_Result, this, &ThisClass::OnNotificationTransactionResultMessage);
 	if (const UItemInstance* Instance = Cast<UItemInstance>(ListItemObject))
 	{
 		UpdateItemByInstance(Instance);

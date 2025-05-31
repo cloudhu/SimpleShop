@@ -60,10 +60,12 @@ void UUW_CategoryBase::OnNumberChangeMessage(FGameplayTag Channel, const FCatego
 		SetIsEnabled(true);
 		return;
 	}
-
+	Debug::Print(Notification.Character->GetName());
+	
 	if (Notification.Character == GetOwningPlayerPawn())
 	{
 		SetNumText(Notification.NewNum);
+		Debug::Print(Tag.ToString() + FString::Printf(TEXT("--UUW_CategoryBase：NewNum:%d;"), Notification.NewNum));
 		SetVisibility(ESlateVisibility::Visible);
 	}
 }

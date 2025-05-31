@@ -37,7 +37,6 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Shop")
 	static UShopActorComponent* FindShopActorComponent(const AActor* Actor) { return (Actor ? Actor->FindComponentByClass<UShopActorComponent>() : nullptr); }
 
-public:
 	//显示商店UI
 	UFUNCTION(BlueprintCallable, Category = "Shop")
 	void ShowShop(APawn* InOwner, bool bVisible = true);
@@ -52,6 +51,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void ShowInventory(bool bVisible = true);
 
+	UUW_ShopLayout* GetLayoutPtr();
 private:
 	//商店UI指针缓存
 	UPROPERTY()

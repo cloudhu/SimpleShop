@@ -34,25 +34,23 @@ void UUW_InventoryPanel::NativeConstruct()
 		SetGoldText(Wallet->GetCurrentGoldNum()); //初始化金币数值显示
 	}
 
-	//背包数据初始化UI
-	if (UInventoryManagerActorComponent* InventoryManager = UInventoryManagerActorComponent::FindInventoryManagerComponent(GetOwningPlayerPawn()))
-	{
-		SetTextNum(Text_MaxGravity, InventoryManager->GetMaxGravity()); //初始化背包负重数值显示
-		SetTextNum(Text_Gravity, InventoryManager->GetCurrentGravity());
-		//初始化背包
-		InventoryManager->InitializeInventory();
-		for (UItemCategory* Category : InventoryManager->GetCategoryArray()) //初始化目录
-		{
-			ListCategory->AddItem(Category);
-		}
-	}
-
 	Button_Close->OnClicked.AddDynamic(this, &ThisClass::OnCloseInventory);
 	//绑定扩展背包按钮点击事件
-	ButtonExpand->OnClicked.AddDynamic(this,&ThisClass::ExpandInventory);
-	if (ListCategory)
+	ButtonExpand->OnClicked.AddDynamic(this, &ThisClass::ExpandInventory);
+
+	//背包数据初始化UI
+	if (GetInventoryManager())
 	{
-		ListCategory->OnItemClicked().AddUObject(this, &UUW_InventoryPanel::OnItemClicked); //Todo:这个OnItemClicked触发有问题,十次也许可以触发一次,这是什么原因???
+		SetTextNum(Text_MaxGravity, CacheInventoryManager->GetMaxGravity()); //初始化背包负重数值显示
+		SetTextNum(Text_Gravity, CacheInventoryManager->GetCurrentGravity());
+
+		RefreshCategory();
+		if (ListCategory)
+		{
+			ListCategory->OnItemClicked().AddUObject(this, &UUW_InventoryPanel::OnItemClicked); //Todo:这个OnItemClicked触发有问题,十次也许可以触发一次,这是什么原因???
+		}
+		//初始化背包
+		CacheInventoryManager->InitializeInventory();
 	}
 }
 
@@ -71,7 +69,7 @@ void UUW_InventoryPanel::OnCategoryClickMessage(FGameplayTag Channel, const FCat
 	if (Notification.Character == GetOwningPlayerPawn())
 	{
 		CacheTag = Notification.Tag;
-		UpdateItemListByTag(Notification.Tag);
+		UpdateItemListByTag(CacheTag);
 	}
 }
 
@@ -121,6 +119,8 @@ void UUW_InventoryPanel::OnInventoryExpandMessage(FGameplayTag Channel, const FI
 	if (Notification.InventoryOwner == GetOwningPlayerPawn())
 	{
 		const int32 Index = TileView_ItemList->GetNumItems();
+		// Debug::Print(FString::Printf(TEXT("--OnInventoryExpandMessage(TileView_ItemList--增加：%d, 原本数量:%d);"), Notification.Delta, Index));
+
 		//循环生成对应数量的格子，从而达到扩容的目标
 		for (int i = Index; i < Index + Notification.Delta; ++i)
 		{
@@ -128,9 +128,9 @@ void UUW_InventoryPanel::OnInventoryExpandMessage(FGameplayTag Channel, const FI
 			Instance->SetIndex(i);
 			TileView_ItemList->AddItem(Instance);
 		}
+		//更新物品列表
+		UpdateItemListByTag(CacheTag);
 	}
-	//更新物品列表
-	UpdateItemListByTag(CacheTag);
 }
 
 void UUW_InventoryPanel::SetGoldText(const int32 InNum) const
@@ -151,20 +151,21 @@ void UUW_InventoryPanel::OnCloseInventory()
 void UUW_InventoryPanel::ExpandInventory()
 {
 	//获取背包管理组件
-	if (UInventoryManagerActorComponent* InventoryManager = UInventoryManagerActorComponent::FindInventoryManagerComponent(GetOwningPlayerPawn()))
+	if (GetInventoryManager())
 	{
 		//判断背包是否满足扩容的条件
-		if (InventoryManager->CanExpandInventory())
+		if (CacheInventoryManager->CanExpandInventory())
 		{
-			InventoryManager->UpgradeInventory();
+			CacheInventoryManager->UpgradeInventory();
 			//背包升级之后，再次判断能否扩容，无法扩容则隐藏扩展按钮
-			if (!InventoryManager->CanExpandInventory())
+			if (!CacheInventoryManager->CanExpandInventory())
 			{
 				ButtonExpand->SetVisibility(ESlateVisibility::Collapsed);
 			}
 		}
 		else
-		{//无法扩容则隐藏扩展按钮
+		{
+			//无法扩容则隐藏扩展按钮
 			ButtonExpand->SetVisibility(ESlateVisibility::Collapsed);
 		}
 	}
@@ -217,6 +218,50 @@ void UUW_InventoryPanel::OnItemClicked(UObject* Item)
 	{
 		UpdateItemListByTag(Category->GetTag());
 	}
+}
+
+void UUW_InventoryPanel::RefreshCategory()
+{
+	ListCategory->ClearListItems();
+	for (UItemCategory* Category : GetInventoryManager()->GetCategoryArray()) //初始化目录
+	{
+		ListCategory->AddItem(Category);
+	}
+}
+
+void UUW_InventoryPanel::RefreshItemList()
+{
+	const int32 Count = TileView_ItemList->GetNumItems();
+	TileView_ItemList->ClearListItems();
+	for (UItemInstance* ItemInstance : GetInventoryManager()->GetAllValidItems())
+	{
+		TileView_ItemList->AddItem(ItemInstance);
+	}
+
+	//循环生成对应数量的格子，从而达到扩容的目标
+	for (int i = TileView_ItemList->GetNumItems(); i < Count; ++i)
+	{
+		UItemInstance* Instance = NewObject<UItemInstance>(GetOwningPlayerPawn());
+		Instance->SetIndex(i);
+		TileView_ItemList->AddItem(Instance);
+	}
+}
+
+UInventoryManagerActorComponent* UUW_InventoryPanel::GetInventoryManager()
+{
+	if (!CacheInventoryManager)
+	{
+		CacheInventoryManager = UInventoryManagerActorComponent::FindInventoryManagerComponent(GetOwningPlayerPawn());
+	}
+	return CacheInventoryManager;
+}
+
+void UUW_InventoryPanel::OnPanelOpen()
+{
+	Super::OnPanelOpen();
+	RefreshItemList();
+	RefreshCategory();
+	UpdateItemListByTag(CacheTag);
 }
 
 // void UUW_InventoryPanel::OnItemStackChanged(FGameplayTag Channel, const FInventoryChangeMessage& Notification)

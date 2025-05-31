@@ -9,14 +9,23 @@
 #include "Definition/ItemInstance.h"
 #include "Message/GlobalNativeTags.h"
 
+void UUW_InventoryItem::NativeOnListItemObjectSet(UObject* ListItemObject)
+{
+	Super::NativeOnListItemObjectSet(ListItemObject);
+	UGameplayMessageSubsystem& MessageSubsystem = UGameplayMessageSubsystem::Get(GetWorld());
+
+	// Debug::Print(FString::Printf(TEXT("--UUW_InventoryItem(NativeOnListItemObjectSet--InstanceIndex：%d, ItemID:%d);"), GetInstanceIndex(), GetItemID()));
+	ListenerHandle = MessageSubsystem.RegisterListener(TAG_Inventory_Message_StackChanged, this, &ThisClass::OnItemStackChanged);
+}
+
 void UUW_InventoryItem::OnClickedWidget()
 {
-	Super::OnClickedWidget();//先调用基类的
+	Super::OnClickedWidget(); //先调用基类的
 	//背包物品被点击时发送物品出售的消息
 	//交易消息声明
 	FTransactionMessage TransactionMessage;
 	//交易时,买家暂时是空，物品所有者被设置成卖家
-	TransactionMessage.Buyer = nullptr; 
+	TransactionMessage.Buyer = nullptr;
 	TransactionMessage.Seller = GetOwningPlayerPawn();
 	TransactionMessage.ItemID = GetItemID();
 	TransactionMessage.InstanceID = GetInstanceIndex();
@@ -61,6 +70,8 @@ void UUW_InventoryItem::OnClickedWidget()
 
 void UUW_InventoryItem::OnItemStackChanged(FGameplayTag Chanel, const FInventoryChangeMessage& Message)
 {
+	Debug::Print(Message.Instance->GetItemName().ToString() + FString::Printf(
+		TEXT("--UUW_InventoryItem(ItemInstance--ItemID：%d, NewCount:%d);"), Message.Instance->GetIndex(), Message.NewCount));
 	if (Message.InventoryOwner == GetOwningPlayerPawn())
 	{
 		if (GetInstanceIndex() == Message.Instance->GetIndex())
@@ -73,13 +84,15 @@ void UUW_InventoryItem::OnItemStackChanged(FGameplayTag Chanel, const FInventory
 void UUW_InventoryItem::NativeConstruct()
 {
 	Super::NativeConstruct();
-	UGameplayMessageSubsystem& MessageSubsystem = UGameplayMessageSubsystem::Get(GetWorld());
-	ListenerHandle = MessageSubsystem.RegisterListener(TAG_Inventory_Message_StackChanged, this, &ThisClass::OnItemStackChanged);
 }
 
 void UUW_InventoryItem::NativeDestruct()
 {
 	Super::NativeDestruct();
+	if (ListenerHandle.IsValid())
+	{
+		ListenerHandle.Unregister();
+	}
 }
 
 FReply UUW_InventoryItem::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -107,12 +120,12 @@ FReply UUW_InventoryItem::NativeOnMouseButtonDown(const FGeometry& InGeometry, c
 void UUW_InventoryItem::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)
 {
 	//这个类生成拖拽的图标，所以需要判断其是否有效
-	if (DragDropIconClass) 
+	if (DragDropIconClass)
 	{
 		//获取背包格子对应的数据缓存
-		if (const FItemTable* InSlotData = GetDataTable()) 
+		if (const FItemTable* InSlotData = GetDataTable())
 		{
-			if (InSlotData->IsValid())//判断数据是否有效
+			if (InSlotData->IsValid()) //判断数据是否有效
 			{
 				//生成拖拽的图标
 				if (UUW_DragDropIcon* DragDropIcon = CreateWidget<UUW_DragDropIcon>(GetWorld(), DragDropIconClass))
@@ -166,11 +179,12 @@ bool UUW_InventoryItem::NativeOnDrop(const FGeometry& InGeometry, const FDragDro
 				                                     DraggedInventorySlot->GetGuid());
 				bDrop = true;
 			}
-		}//判断是否是从快捷栏拖拽到背包的物品
+		} //判断是否是从快捷栏拖拽到背包的物品
 		else if (const UUW_QuickBarItem* DraggedSlot = Cast<UUW_QuickBarItem>(InDragDropOperation->Payload))
 		{
 			if (UQuickBarComponent* QuickBar = UQuickBarComponent::FindQuickBarComponent(GetOwningPlayerPawn()))
-			{//获取快捷栏组件
+			{
+				//获取快捷栏组件
 				if (UInventoryManagerActorComponent* InventoryComponent = UInventoryManagerActorComponent::FindInventoryManagerComponent(
 					GetOwningPlayerPawn()))
 				{

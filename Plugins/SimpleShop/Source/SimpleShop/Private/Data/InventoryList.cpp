@@ -23,6 +23,7 @@ TArray<UItemInstance*> FInventoryList::GetAllValidItems() const
 
 void FInventoryList::UpdateTaggedItems(const FGameplayTag& InTag) const
 {
+	// Debug::Print(InTag.ToString());
 	for (const FInventoryEntry& Entry : Entries)
 	{
 		if (Entry.Instance->HasTagExact(InTag)) //广播符合条件的物品
@@ -376,7 +377,8 @@ void FInventoryList::BroadcastChangeMessage(const FInventoryEntry& Entry, const 
 	Message.Instance = Entry.Instance;
 	Message.NewCount = NewCount;
 	Message.Delta = NewCount - OldCount;
-
+	// Debug::Print(Message.Instance->GetItemName().ToString() + FString::Printf(
+	// 	TEXT("--BroadcastChangeMessage(ItemInstance--ItemID：%d, NewCount:%d);"), Message.Instance->GetIndex(), Message.NewCount));
 	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(OwnerComponent->GetWorld());
 	MessageSystem.BroadcastMessage(TAG_Inventory_Message_StackChanged, Message);
 }
@@ -388,9 +390,10 @@ void FInventoryList::BroadcastEmptyInstanceMessage(const int32 InIndex) const
 	UItemInstance* Instance = NewObject<UItemInstance>(OwnerComponent->GetOwner());
 	Instance->SetIndex(InIndex);
 	Message.Instance = Instance;
-	Message.NewCount = 1;
+	Message.NewCount = 0;
 	Message.Delta = 0;
-
+	// Debug::Print(Message.Instance->GetItemName().ToString() + FString::Printf(
+	// 	TEXT("--BroadcastEmptyInstanceMessage(ItemInstance--ItemID：%d, NewCount:%d);"), Message.Instance->GetIndex(),Message.NewCount));
 	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(OwnerComponent->GetWorld());
 	MessageSystem.BroadcastMessage(TAG_Inventory_Message_StackChanged, Message);
 }

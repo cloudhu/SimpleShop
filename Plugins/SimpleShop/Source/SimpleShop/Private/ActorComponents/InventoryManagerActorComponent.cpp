@@ -73,7 +73,7 @@ bool UInventoryManagerActorComponent::CanAddItemDefinition(const TSubclassOf<UOb
 UItemInstance* UInventoryManagerActorComponent::AddItemDefinition(const TSubclassOf<UObject> ItemClass, const int32 InItemID, const int32 StackCount /*= 1*/)
 {
 	UItemInstance* Result = nullptr;
-	Debug::Print(FString::Printf(TEXT("AddItemDefinition(ItemClass, InItemID：%d, StackCount:%d);"), InItemID, StackCount));
+	// Debug::Print(FString::Printf(TEXT("AddItemDefinition(ItemClass, InItemID：%d, StackCount:%d);"), InItemID, StackCount));
 	if (ItemClass != nullptr && CanAddItemDefinition(ItemClass, StackCount))
 	{
 		//获取物品类的默认对象CDO
@@ -333,7 +333,7 @@ void UInventoryManagerActorComponent::BroadcastCategoryMessage(const FGameplayTa
 	{
 		Category = NewObject<UItemCategory>(GetOwner<APawn>());
 		Category->SetTag(InTag);
-		Category->SetAmount(NewCount);
+		
 		CategoryArray.Add(Category);
 	}
 	else //修改
@@ -347,11 +347,12 @@ void UInventoryManagerActorComponent::BroadcastCategoryMessage(const FGameplayTa
 			}
 		}
 	}
+	Category->SetAmount(NewCount);
 	Message.ItemCategory = Category;
 	Message.NewNum = NewCount;
 	Message.Delta = NewCount - OldCount;
 
-	Debug::Print(InTag.ToString() + FString::Printf(TEXT("BroadcastCategoryMessage：NewCount:%d;"), NewCount));
+	// Debug::Print(InTag.ToString() + FString::Printf(TEXT("--BroadcastCategoryMessage：NewCount:%d;"), NewCount));
 
 	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 	MessageSystem.BroadcastMessage(TAG_Inventory_Category_Message, Message);

@@ -20,8 +20,8 @@ public:
 	UUW_PanelBase(const FObjectInitializer& ObjectInitializer);
 
 	UFUNCTION(BlueprintCallable, Category=UI)
-	void OnPanelClose();
+	virtual void OnPanelClose();
 
 	UFUNCTION(BlueprintCallable, Category=UI)
-	void OnPanelOpen();
+	virtual void OnPanelOpen();
 };

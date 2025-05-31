@@ -100,7 +100,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = Item)
 	TSubclassOf<UUW_ItemTips> TipClass;
 
-public:
 	//构造函数
 	UUW_ItemSlotBase(const FObjectInitializer& ObjectInitializer);
 
@@ -224,6 +223,7 @@ public: //Setters
 	 * @param bEnabled 物品状态
 	 */
 	void SetItemIsEnabled(const bool bEnabled) const;
+
 public:
 	/**
 	 * @brief 根据数据更新UI格子

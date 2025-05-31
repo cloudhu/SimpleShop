@@ -14,7 +14,12 @@ class UUW_DragDropIcon;
 UCLASS()
 class SIMPLESHOP_API UUW_InventoryItem : public UUW_ItemSlotBase
 {
+public:
+	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;
+
+private:
 	GENERATED_BODY()
+
 public:
 		//生成的拖拽图标
 		UPROPERTY(EditDefaultsOnly, Category = InventorySlot)

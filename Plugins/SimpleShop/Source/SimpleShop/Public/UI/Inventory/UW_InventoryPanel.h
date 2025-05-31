@@ -155,10 +155,19 @@ public:
 	UFUNCTION(BlueprintCallable,Category=InventoryPanel, BlueprintPure = false)
 	void OnItemClicked(UObject* Item);
 
+	void RefreshCategory();
+	
+	void RefreshItemList();
+
+	UInventoryManagerActorComponent* GetInventoryManager();
+	
+	virtual void OnPanelOpen() override;
 	/**
 	 * @brief 扩展背包
 	 */
 private:
+	UPROPERTY()
+	UInventoryManagerActorComponent* CacheInventoryManager;
 	/**
 	 * @brief 目录点击消息监听句柄
 	 */

@@ -213,6 +213,7 @@ public:
 	 * @return 背包等级未满就可以
 	 */
 	bool CanExpandInventory() const { return Level + 1 < MaxLevel; }
+	
 private:
 	/**
 	 * @brief 广播背包目录消息

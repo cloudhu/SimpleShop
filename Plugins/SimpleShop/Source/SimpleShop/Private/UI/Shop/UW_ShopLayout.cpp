@@ -50,7 +50,6 @@ void UUW_ShopLayout::ShowInventory(bool bVisible /*= true*/)
 		if (bVisible)
 		{
 			InventoryPanel->OnPanelOpen();
-			InventoryPanel->UpdateItemListByTag(TAG_Item_Type_All);
 			SetVisibility(ESlateVisibility::Visible);
 		}
 		else

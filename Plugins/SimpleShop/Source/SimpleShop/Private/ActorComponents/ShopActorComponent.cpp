@@ -21,10 +21,10 @@ void UShopActorComponent::OnNotificationTransactionMessage(FGameplayTag Channel,
 	CacheNotification = Notification;
 	//弹出确认窗口
 	ConfirmWindow->SetVisibility(ESlateVisibility::Visible);
-	
-	if (Notification.Buyer == GetPawnChecked<APawn>())//如果是买家
+
+	if (Notification.Buyer == GetPawnChecked<APawn>()) //如果是买家
 	{
-		if (Notification.bIsCompoundItem)//是否是合成物品
+		if (Notification.bIsCompoundItem) //是否是合成物品
 		{
 			ConfirmWindow->SetTitle(FText::Format(NSLOCTEXT("ConfirmWindow", "Title", "Confirm Compound at Price:{0}"), Notification.Price));
 		}
@@ -77,36 +77,41 @@ void UShopActorComponent::CancelAction() const
 
 void UShopActorComponent::ShowShop(APawn* InOwner, bool bVisible)
 {
-	ShopLayoutPtr->ShowShop(InOwner, bVisible);
+	GetLayoutPtr()->ShowShop(InOwner, bVisible);
 }
 
 void UShopActorComponent::ChangeShopOwner(APawn* InOwner)
 {
-	ShopLayoutPtr->ChangeShopOwner(InOwner);
+	GetLayoutPtr()->ChangeShopOwner(InOwner);
 }
 
 void UShopActorComponent::ShowInventory(bool bVisible /*= true*/)
 {
-	ShopLayoutPtr->ShowInventory(bVisible);
+	GetLayoutPtr()->ShowInventory(bVisible);
 }
 
-void UShopActorComponent::BeginPlay()
+UUW_ShopLayout* UShopActorComponent::GetLayoutPtr()
 {
-	Super::BeginPlay();
-	//生成商店的缓存
 	if (!ShopLayoutPtr)
 	{
 		if (ShopLayoutClass)
 		{
 			ShopLayoutPtr = CreateWidget<UUW_ShopLayout>(GetController<APlayerController>(), ShopLayoutClass);
 			ShopLayoutPtr->AddToViewport(5);
-			ShopLayoutPtr->ShowShop(GetPawnChecked<APawn>(),false);
-			ConfirmWindow = ShopLayoutPtr->GetConfirmWindow();
-			ConfirmWindow->ConfirmActionDelegate.BindUObject(this, &UShopActorComponent::ConfirmAction);
-			ConfirmWindow->CanceledDelegate.BindUObject(this, &UShopActorComponent::CancelAction);
 		}
 	}
+	return ShopLayoutPtr;
+}
 
+void UShopActorComponent::BeginPlay()
+{
+	Super::BeginPlay();
+	//生成商店的缓存
+	ConfirmWindow = GetLayoutPtr()->GetConfirmWindow();
+	ConfirmWindow->ConfirmActionDelegate.BindUObject(this, &UShopActorComponent::ConfirmAction);
+	ConfirmWindow->CanceledDelegate.BindUObject(this, &UShopActorComponent::CancelAction);
+	ShowShop(GetPawnChecked<APawn>(), false);
+	ShowInventory(false);
 	// 监听交易消息
 	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 	TransactionListenerHandle = MessageSystem.RegisterListener(TAG_Transaction_Message, this, &ThisClass::OnNotificationTransactionMessage);
