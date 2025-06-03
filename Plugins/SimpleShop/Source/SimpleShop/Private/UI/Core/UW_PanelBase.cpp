@@ -19,12 +19,12 @@ void UUW_PanelBase::OnPanelClose()
 void UUW_PanelBase::OnPanelOpen()
 {
 	GetOwningPlayer()->SetShowMouseCursor(true);
-	FInputModeUIOnly ModeUIOnly;
-	ModeUIOnly.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+	FInputModeGameAndUI InputModeGameAndUI;
+	InputModeGameAndUI.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 	if (IsFocusable())
 	{
-		ModeUIOnly.SetWidgetToFocus(TakeWidget());
+		InputModeGameAndUI.SetWidgetToFocus(TakeWidget());
 	}
-	GetOwningPlayer()->SetInputMode(ModeUIOnly);
+	GetOwningPlayer()->SetInputMode(InputModeGameAndUI);
 	SetVisibility(ESlateVisibility::Visible);
 }

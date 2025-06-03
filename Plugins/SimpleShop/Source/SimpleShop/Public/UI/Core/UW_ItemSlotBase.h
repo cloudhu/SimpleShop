@@ -10,6 +10,7 @@
 #include "Message/TransactionMessage.h"
 #include "UW_ItemSlotBase.generated.h"
 
+class USizeBox;
 class UItemInstance;
 class UTextBlock;
 class UImage;
@@ -91,9 +92,12 @@ public:
 	/**
 	 * @brief 数量文本
 	 */
-	UPROPERTY(BlueprintReadOnly, Category = CategoryButton, meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, Category = Item, meta = (BindWidget))
 	UTextBlock* CountText;
-
+	
+	UPROPERTY(BlueprintReadOnly, Category = Item, meta = (BindWidget))
+	USizeBox* SizeBox_Amount;
+	
 	/**
 	 * @brief 提示类
 	 */

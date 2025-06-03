@@ -70,8 +70,8 @@ void UUW_InventoryItem::OnClickedWidget()
 
 void UUW_InventoryItem::OnItemStackChanged(FGameplayTag Chanel, const FInventoryChangeMessage& Message)
 {
-	Debug::Print(Message.Instance->GetItemName().ToString() + FString::Printf(
-		TEXT("--UUW_InventoryItem(ItemInstance--ItemID：%d, NewCount:%d);"), Message.Instance->GetIndex(), Message.NewCount));
+	// Debug::Print(Message.Instance->GetItemName().ToString() + FString::Printf(
+	// 	TEXT("--UUW_InventoryItem(ItemInstance--ItemID：%d, NewCount:%d);"), Message.Instance->GetIndex(), Message.NewCount));
 	if (Message.InventoryOwner == GetOwningPlayerPawn())
 	{
 		if (GetInstanceIndex() == Message.Instance->GetIndex())

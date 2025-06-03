@@ -6,6 +6,7 @@
 #include "Core/ShopSubsystem.h"
 #include "ActorComponents/InventoryManagerActorComponent.h"
 #include "ActorComponents/QuickBarComponent.h"
+#include "Components/SizeBox.h"
 #include "Components/TextBlock.h"
 #include "Definition/ItemInstance.h"
 #include "Message/GlobalNativeTags.h"
@@ -218,7 +219,7 @@ void UUW_ItemSlotBase::UpdateItemByInstance(const UItemInstance* Instance)
 	}
 	else
 	{
-		CountText->SetVisibility(ESlateVisibility::Hidden);
+		SizeBox_Amount->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
 
@@ -233,12 +234,12 @@ void UUW_ItemSlotBase::SetNumText(const int32 InNum)
 {
 	if (InNum == INDEX_NONE)
 	{
-		CountText->SetVisibility(ESlateVisibility::Hidden);
+		SizeBox_Amount->SetVisibility(ESlateVisibility::Hidden);
 		Amount = 0;
 		return;
 	}
 	Amount = InNum;
-	CountText->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	SizeBox_Amount->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	CountText->SetText(FText::Format(NSLOCTEXT("UUW_ItemSlotBase", "SetNumText", "{0}"), InNum));
 }
 
