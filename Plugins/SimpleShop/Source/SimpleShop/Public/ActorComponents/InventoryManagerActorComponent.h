@@ -7,7 +7,6 @@
 #include "GameplayTagContainer.h"
 #include "Core/ActorComponentBase.h"
 #include "Data/InventoryList.h"
-#include "Message/GlobalNativeTags.h"
 #include "UI/Common/UW_UpgradeConfirm.h"
 #include "InventoryManagerActorComponent.generated.h"
 

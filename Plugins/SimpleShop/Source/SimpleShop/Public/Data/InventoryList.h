@@ -129,8 +129,9 @@ public:
 	 * @brief 将物品实例移动到指定的索引
 	 * @param Guid 物品唯一编号
 	 * @param Index 在背包UI中的索引
+	 * @param TargetIndex 目标索引
 	 */
-	void MoveInstanceToIndex(const FGuid Guid, const int32 Index);
+	void MoveInstanceToIndex(const FGuid Guid, const int32 Index,const int32 TargetIndex);
 
 	/**
 	 * @brief 是否可以添加物品
@@ -145,7 +146,7 @@ public:
 	 * @param ItemClass 物品定义
 	 * @return 可以容纳的数量
 	 */
-	int32 GetInventoryCapacity(const TSubclassOf<UObject> ItemClass);
+	int32 GetItemCapacity(const TSubclassOf<UObject> ItemClass);
 
 	/**
 	 * @brief 获取空格子
@@ -159,7 +160,7 @@ public:
 	 * @brief 获取有效的数量
 	 * @return 数量
 	 */
-	int32 GetValidDataAmount() const { return Entries.Num(); }
+	FORCEINLINE int32 GetValidDataAmount() const { return Entries.Num(); }
 
 	/**
 	 * @brief 获取新的条目
@@ -170,15 +171,18 @@ public:
 	/**
 	 * @brief 根据全局唯一编号查找
 	 * @param InGuid 全局唯一编号
+	 * @param Index 目标索引
 	 * @return 目标物品
 	 */
-	FInventoryEntry& FindEntryByGuid(const FGuid InGuid);
+	FInventoryEntry& FindEntryByGuid(const FGuid InGuid, const int32 Index = INDEX_NONE);
 
 	/**
 	 * @brief 获取背包最大容量
 	 * @return 容量
 	 */
 	int32 GetInventoryMaxVolume() const;
+
+	void ExpandVolume(const int32 InVolume);
 
 private:
 	/**
@@ -187,13 +191,7 @@ private:
 	 * @param OldCount 之前的数量
 	 * @param NewCount 新的数量
 	 */
-	void BroadcastChangeMessage(const FInventoryEntry& Entry, const int32 OldCount, const int32 NewCount) const;
-
-	/**
-	 * @brief 广播空实例消息
-	 * @param InIndex 索引
-	 */
-	void BroadcastEmptyInstanceMessage(const int32 InIndex) const;
+	void BroadcastChangeMessage(const FInventoryEntry& Entry, const int32 OldCount = 0, const int32 NewCount = 0) const;
 
 private:
 	friend UInventoryManagerActorComponent;

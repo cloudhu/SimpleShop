@@ -26,7 +26,7 @@ struct FShopTypes : public FTableRowBase
 
 	/** 升级消耗 */
 	UPROPERTY(EditDefaultsOnly, Category = "ShopConfig")
-	int32 UpgradeCost;
+	int32 UpgradeCost=0;
 };
 
 //背包配置表

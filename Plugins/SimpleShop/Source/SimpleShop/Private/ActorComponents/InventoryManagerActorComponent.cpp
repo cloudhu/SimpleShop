@@ -51,8 +51,7 @@ bool UInventoryManagerActorComponent::CanAddItemDefinition(const TSubclassOf<UOb
 	{
 		if (const IItemDefinitionInterface* ItemDef = Cast<IItemDefinitionInterface>(Obj))
 		{
-			if ((GetTotalItemCountByDefinition(ItemClass) + StackCount) < ItemDef->Execute_GetMaxAmount(Obj) && GetRemainingGravity() >= ItemDef->Execute_GetGravity(Obj)
-				*
+			if (GetTotalItemCountByDefinition(ItemClass) + StackCount < ItemDef->Execute_GetMaxAmount(Obj) && GetRemainingGravity() >= ItemDef->Execute_GetGravity(Obj) *
 				StackCount)
 			{
 				return InventoryList.CanAddItem(ItemClass, StackCount);
@@ -73,7 +72,8 @@ bool UInventoryManagerActorComponent::CanAddItemDefinition(const TSubclassOf<UOb
 UItemInstance* UInventoryManagerActorComponent::AddItemDefinition(const TSubclassOf<UObject> ItemClass, const int32 InItemID, const int32 StackCount /*= 1*/)
 {
 	UItemInstance* Result = nullptr;
-	// Debug::Print(FString::Printf(TEXT("AddItemDefinition(ItemClass, InItemID：%d, StackCount:%d);"), InItemID, StackCount));
+	// Debug::Print(FString::Printf(TEXT("AddItemDefinition(InItemID：%d, StackCount:%d);"), InItemID, StackCount));
+	// Debug::Print(FString::Printf(TEXT("AddItemDefinition(CanAddItemDefinition：%d);"), CanAddItemDefinition(ItemClass, StackCount)));
 	if (ItemClass != nullptr && CanAddItemDefinition(ItemClass, StackCount))
 	{
 		//获取物品类的默认对象CDO
@@ -285,7 +285,8 @@ void UInventoryManagerActorComponent::ExpandVolume(const int32 InCount)
 	if (GetMaxVolume() + InCount > 0)
 	{
 		MaxVolume += InCount;
-
+		// Debug::Print(FString::Printf(TEXT("--UInventoryManagerActorComponent::ExpandVolume：MaxVolume:%d;"), MaxVolume));
+		InventoryList.ExpandVolume(MaxVolume);
 		//背包扩展后发消息通知UI更新
 		BroadcastDeltaMessage(TAG_Inventory_Expanded_Message, InCount);
 	}
@@ -303,7 +304,7 @@ UItemInstance* UInventoryManagerActorComponent::GetItemByIndex(const int32 InIns
 
 int32 UInventoryManagerActorComponent::GetInventoryCapacity(const TSubclassOf<UObject> ItemClass)
 {
-	return InventoryList.GetInventoryCapacity(ItemClass);
+	return InventoryList.GetItemCapacity(ItemClass);
 }
 
 void UInventoryManagerActorComponent::AddGravity(const float Delta)
@@ -333,7 +334,7 @@ void UInventoryManagerActorComponent::BroadcastCategoryMessage(const FGameplayTa
 	{
 		Category = NewObject<UItemCategory>(GetOwner<APawn>());
 		Category->SetTag(InTag);
-		
+
 		CategoryArray.Add(Category);
 	}
 	else //修改

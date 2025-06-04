@@ -118,16 +118,7 @@ void UUW_InventoryPanel::OnInventoryExpandMessage(FGameplayTag Channel, const FI
 {
 	if (Notification.InventoryOwner == GetOwningPlayerPawn())
 	{
-		const int32 Index = TileView_ItemList->GetNumItems();
-		// Debug::Print(FString::Printf(TEXT("--OnInventoryExpandMessage(TileView_ItemList--增加：%d, 原本数量:%d);"), Notification.Delta, Index));
-
-		//循环生成对应数量的格子，从而达到扩容的目标
-		for (int i = Index; i < Index + Notification.Delta; ++i)
-		{
-			UItemInstance* Instance = NewObject<UItemInstance>(GetOwningPlayerPawn());
-			Instance->SetIndex(i);
-			TileView_ItemList->AddItem(Instance);
-		}
+		RefreshItemList();
 		//更新物品列表
 		UpdateItemListByTag(CacheTag);
 	}
@@ -231,19 +222,12 @@ void UUW_InventoryPanel::RefreshCategory()
 
 void UUW_InventoryPanel::RefreshItemList()
 {
-	const int32 Count = TileView_ItemList->GetNumItems();
 	TileView_ItemList->ClearListItems();
+	Debug::Print(FString::Printf(TEXT("RefreshItemList:%d"), GetInventoryManager()->GetAllValidItems().Num()));
+	//循环生成对应数量的格子
 	for (UItemInstance* ItemInstance : GetInventoryManager()->GetAllValidItems())
 	{
 		TileView_ItemList->AddItem(ItemInstance);
-	}
-
-	//循环生成对应数量的格子，从而达到扩容的目标
-	for (int i = TileView_ItemList->GetNumItems(); i < Count; ++i)
-	{
-		UItemInstance* Instance = NewObject<UItemInstance>(GetOwningPlayerPawn());
-		Instance->SetIndex(i);
-		TileView_ItemList->AddItem(Instance);
 	}
 }
 

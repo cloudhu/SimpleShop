@@ -28,7 +28,6 @@ class SIMPLESHOP_API UUW_ItemSlotBase : public UUserWidget, public IUserObjectLi
 	GENERATED_BODY()
 
 	//缓存数据
-private:
 	/**
 	 * @brief 实例唯一编号，实例是全局唯一的，就像世界上没有两片相同的树叶一样，种子的DNA是一样的，但是长出来的树叶千变万化
 	 */
@@ -94,10 +93,10 @@ public:
 	 */
 	UPROPERTY(BlueprintReadOnly, Category = Item, meta = (BindWidget))
 	UTextBlock* CountText;
-	
+
 	UPROPERTY(BlueprintReadOnly, Category = Item, meta = (BindWidget))
 	USizeBox* SizeBox_Amount;
-	
+
 	/**
 	 * @brief 提示类
 	 */
@@ -129,7 +128,7 @@ public:
 	 */
 	virtual bool IsQuickBarItem() const { return false; }
 
-public: //Getters
+	//Getters
 	/**
 	 * @brief 获取提示UI
 	 * @return 提示UI指针
