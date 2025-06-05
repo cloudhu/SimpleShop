@@ -103,7 +103,6 @@ public:
 	 */
 	void SetGuid(const FGuid InGuid);
 
-public:
 	/**
 	 * @brief 获取物品编号
 	 * @return 物品编号
@@ -130,6 +129,9 @@ public:
 	/// </summary>
 	/// <param name="InDef">物品定义</param>
 	void SetItemDef(const TSubclassOf<UObject> InDef);
+
+	void SetItem(const UItemInstance* InItemInstance);
+
 private:
 	/**
 	 * @brief 标签栈

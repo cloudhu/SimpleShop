@@ -17,7 +17,7 @@ void UUW_ShopItem::OnClickedWidget()
 	//发送交易消息
 	FTransactionMessage TransactionMessage;
 	TransactionMessage.Buyer = GetOwningPlayerPawn();
-	TransactionMessage.Seller = GetItemOwner();
+	TransactionMessage.Seller = nullptr;
 	TransactionMessage.ItemID = GetItemID();
 	TransactionMessage.Price = GetPrice();
 	int32 MaxCountTmp = 1;
@@ -35,7 +35,7 @@ void UUW_ShopItem::OnClickedWidget()
 		}
 	}
 
-	if (UWalletActorComponent* Wallet = UWalletActorComponent::FindWalletActorComponent(GetOwningPlayerPawn()))
+	if (const UWalletActorComponent* Wallet = UWalletActorComponent::FindWalletActorComponent(GetOwningPlayerPawn()))
 	{
 		if (const int32 CanBuyCount = Wallet->GetCurrentGoldNum() / GetPrice(); CanBuyCount < MaxCountTmp)
 		{

@@ -139,7 +139,14 @@ public:
 	 * @brief 获取物品所属的玩家
 	 * @return 玩家指针
 	 */
-	APawn* GetItemOwner() const { return ItemOwner; }
+	const APawn* GetItemOwner() const
+	{
+		if (!ItemOwner)
+		{
+			return  GetOwningPlayerPawn();
+		}
+		return ItemOwner;
+	}
 
 	/**
 	 * @brief 获取物品编号
@@ -177,7 +184,7 @@ public:
 	 */
 	const FGuid& GetGuid() const { return InstanceGuid; }
 
-public: //Setters
+	//Setters
 	/**
 	 * @brief 设置物品编号
 	 * @param InID 编号
@@ -227,7 +234,6 @@ public: //Setters
 	 */
 	void SetItemIsEnabled(const bool bEnabled) const;
 
-public:
 	/**
 	 * @brief 根据数据更新UI格子
 	 * @param InTable 数据表
@@ -271,4 +277,7 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = ItemSlot)
 	virtual void OnClickedWidget();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category=ItemSlot)
+	FORCEINLINE bool IsItemEmpty() const { return Amount == 0; }
 };

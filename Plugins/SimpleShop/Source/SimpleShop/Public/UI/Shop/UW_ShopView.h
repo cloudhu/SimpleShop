@@ -21,6 +21,7 @@ UCLASS(Abstract, Blueprintable)
 class SIMPLESHOP_API UUW_ShopView : public UUW_ShopUIBase
 {
 	GENERATED_BODY()
+
 public:
 	UUW_ShopView(const FObjectInitializer& ObjectInitializer); //构造函数
 
@@ -41,7 +42,6 @@ public:
 	 */
 	UPROPERTY(EditDefaultsOnly, Category = ShopView)
 	TSubclassOf<UUW_ShopItem> ItemClass;
-public:
 	/**
 	 * @brief 当收到物品分类目录被点击消息时调用
 	 * @param Channel 消息频道
@@ -69,7 +69,11 @@ public:
 	 * @brief 更新物品列表
 	 * @param TypeTag 物品类型
 	 */
-	void UpdateItem(const FGameplayTag& TypeTag) const; 
+	void UpdateItem(const FGameplayTag& TypeTag) const;
+
+	UPROPERTY(EditDefaultsOnly, Category=ShopView)
+	int32 ItemGridCollumn = 4;
+
 protected:
 	/**
 	 * @brief 当物品被放置时调用
@@ -84,7 +88,7 @@ protected:
 	 * @brief 关闭商店界面
 	 */
 	UFUNCTION(BlueprintCallable, Category = Shop)
-	void OnCloseWidget(); 
+	void OnCloseWidget();
 
 	/// <summary>
 	/// 关闭合成面板
@@ -98,6 +102,7 @@ protected:
 	 * @param NewCount 新的数量
 	 */
 	void BroadcastCategoryMessage(const FGameplayTag InTag, const int32 OldCount, const int32 NewCount) const;
+
 private:
 	/**
 	 * @brief 商店所有者

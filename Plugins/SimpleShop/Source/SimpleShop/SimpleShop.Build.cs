@@ -27,7 +27,7 @@ public class SimpleShop : ModuleRules
 			{
 				"Core",
 				"Engine",
-				"GameplayTags",
+				"GameplayTags", "GameplayMessageRuntime",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);

@@ -37,6 +37,7 @@ void UUW_ShopLayout::ShowShop(APawn* InOwner, bool bVisible /*= true*/)
 		else
 		{
 			ShopPtr->OnPanelClose();
+			InventoryPanel->OnCloseInventory();
 			ConfirmWindow->SetVisibility(ESlateVisibility::Hidden);
 			CompoundPanel->SetVisibility(ESlateVisibility::Hidden);
 		}

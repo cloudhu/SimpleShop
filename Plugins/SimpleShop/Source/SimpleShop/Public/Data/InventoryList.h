@@ -100,7 +100,7 @@ public:
 	 * @param ItemClass 物品类
 	 * @param InCount 数量
 	 */
-	void RemoveEntry(const TSubclassOf<UObject> ItemClass, const int32 InCount);
+	void RemoveEntry(const TSubclassOf<UObject>& ItemClass, const int32 InCount);
 
 	/**
 	 * @brief 移除指定编号的数据
@@ -129,9 +129,8 @@ public:
 	 * @brief 将物品实例移动到指定的索引
 	 * @param Guid 物品唯一编号
 	 * @param Index 在背包UI中的索引
-	 * @param TargetIndex 目标索引
 	 */
-	void MoveInstanceToIndex(const FGuid Guid, const int32 Index,const int32 TargetIndex);
+	void MoveInstanceToIndex(const FGuid Guid, const int32 Index);
 
 	/**
 	 * @brief 是否可以添加物品
@@ -154,7 +153,7 @@ public:
 	 * @param StackCount 数量
 	 * @return 空的条目
 	 */
-	FInventoryEntry& GetEmptyEntry(const TSubclassOf<UObject> ItemClass, const int32 StackCount);
+	FInventoryEntry& GetEmptyEntry(const TSubclassOf<UObject>& ItemClass, const int32 StackCount);
 
 	/**
 	 * @brief 获取有效的数量
@@ -171,10 +170,9 @@ public:
 	/**
 	 * @brief 根据全局唯一编号查找
 	 * @param InGuid 全局唯一编号
-	 * @param Index 目标索引
 	 * @return 目标物品
 	 */
-	FInventoryEntry& FindEntryByGuid(const FGuid InGuid, const int32 Index = INDEX_NONE);
+	FInventoryEntry& FindEntryByGuid(const FGuid InGuid);
 
 	/**
 	 * @brief 获取背包最大容量
@@ -184,6 +182,7 @@ public:
 
 	void ExpandVolume(const int32 InVolume);
 
+	void ResetEntry(FInventoryEntry& Entry) const;
 private:
 	/**
 	 * @brief 广播背包变化消息
@@ -193,13 +192,11 @@ private:
 	 */
 	void BroadcastChangeMessage(const FInventoryEntry& Entry, const int32 OldCount = 0, const int32 NewCount = 0) const;
 
-private:
 	friend UInventoryManagerActorComponent;
 
-private:
 	/**
-	 * @brief Replicated list of items 同步物品列表
-	 */
+	* @brief Replicated list of items 同步物品列表
+	*/
 	UPROPERTY()
 	TArray<FInventoryEntry> Entries;
 

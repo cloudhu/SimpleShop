@@ -185,8 +185,7 @@ bool UUW_InventoryItem::NativeOnDrop(const FGeometry& InGeometry, const FDragDro
 			if (UQuickBarComponent* QuickBar = UQuickBarComponent::FindQuickBarComponent(GetOwningPlayerPawn()))
 			{
 				//获取快捷栏组件
-				if (UInventoryManagerActorComponent* InventoryComponent = UInventoryManagerActorComponent::FindInventoryManagerComponent(
-					GetOwningPlayerPawn()))
+				if (UInventoryManagerActorComponent* InventoryComponent = UInventoryManagerActorComponent::FindInventoryManagerComponent(GetOwningPlayerPawn()))
 				{
 					//获取背包组件,将该物品添加到背包中
 					InventoryComponent->AddItemDefinition(DraggedSlot->GetDataTable()->ItemDefinition, DraggedSlot->GetItemID(),

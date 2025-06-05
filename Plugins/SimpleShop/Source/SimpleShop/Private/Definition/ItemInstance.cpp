@@ -1,5 +1,7 @@
 //  Copyright CloudHu. All Rights Reserved.
 #include "Definition/ItemInstance.h"
+
+#include "Message/GlobalNativeTags.h"
 #include "Net/UnrealNetwork.h"
 
 UItemInstance::UItemInstance(const FObjectInitializer& ObjectInitializer /*= FObjectInitializer::Get()*/)
@@ -125,4 +127,13 @@ void UItemInstance::SetItemDef(const TSubclassOf<UObject> InDef)
 	{
 		Tags = FGameplayTagContainer::EmptyContainer;
 	}
+}
+
+void UItemInstance::SetItem(const UItemInstance* InItemInstance)
+{
+	SetItemID(InItemInstance->GetItemID());
+	SetIndex(InItemInstance->GetIndex());
+	SetGuid(InItemInstance->GetGuid());
+	SetItemDef(InItemInstance->GetItemDef());
+	AddStatTagStack(TAG_Inventory_Item_Count,InItemInstance->GetStatTagStackCount(TAG_Inventory_Item_Count));
 }

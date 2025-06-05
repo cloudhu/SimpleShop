@@ -223,7 +223,7 @@ void UUW_InventoryPanel::RefreshCategory()
 void UUW_InventoryPanel::RefreshItemList()
 {
 	TileView_ItemList->ClearListItems();
-	Debug::Print(FString::Printf(TEXT("RefreshItemList:%d"), GetInventoryManager()->GetAllValidItems().Num()));
+	// Debug::Print(FString::Printf(TEXT("RefreshItemList:%d"), GetInventoryManager()->GetAllValidItems().Num()));
 	//循环生成对应数量的格子
 	for (UItemInstance* ItemInstance : GetInventoryManager()->GetAllValidItems())
 	{

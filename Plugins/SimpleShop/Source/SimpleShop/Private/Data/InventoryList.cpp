@@ -96,7 +96,7 @@ UItemInstance* FInventoryList::AddEntry(const TSubclassOf<UObject> ItemClass, co
 
 //PRAGMA_ENABLE_OPTIMIZATION
 
-void FInventoryList::RemoveEntry(const TSubclassOf<UObject> ItemClass, const int32 InCount)
+void FInventoryList::RemoveEntry(const TSubclassOf<UObject>& ItemClass, const int32 InCount)
 {
 	int32 Total = InCount;
 	//从末尾开始移除
@@ -107,8 +107,7 @@ void FInventoryList::RemoveEntry(const TSubclassOf<UObject> ItemClass, const int
 			if (Entry.StackCount <= Total) //没有那么多,就分多次移除
 			{
 				Total -= Entry.StackCount; //减去已经移除的
-				BroadcastChangeMessage(Entry);
-				Entries.RemoveAt(i);
+				ResetEntry(Entry);
 				if (Total <= 0)
 				{
 					MarkArrayDirty();
@@ -131,15 +130,14 @@ void FInventoryList::RemoveEntry(const TSubclassOf<UObject> ItemClass, const int
 //PRAGMA_DISABLE_OPTIMIZATION
 void FInventoryList::RemoveEntryByIndex(const int32 InInstanceIndex, const int32 InCount)
 {
+	Debug::Print(FString::Printf(TEXT("--FInventoryList::RemoveEntryByIndex(IndexA：%d, InCount:%d);"), InInstanceIndex, InCount));
 	for (auto EntryIt = Entries.CreateIterator(); EntryIt; ++EntryIt)
 	{
 		if (FInventoryEntry& Entry = *EntryIt; Entry.Instance->GetIndex() == InInstanceIndex)
 		{
 			if (InCount == 0 || Entry.StackCount == InCount) //数量相同的情况移除实例
 			{
-				BroadcastChangeMessage(Entry);
-				EntryIt.RemoveCurrent();
-				MarkArrayDirty();
+				ResetEntry(Entry);
 			}
 			else if (Entry.StackCount > InCount) //库存充足的情况还有剩余
 			{
@@ -152,9 +150,7 @@ void FInventoryList::RemoveEntryByIndex(const int32 InInstanceIndex, const int32
 			else //库存不足的情况还需要移除其他同类型的物品
 			{
 				const TSubclassOf<UObject> ItemClass = Entry.Instance->GetItemDef();
-				BroadcastChangeMessage(Entry);
-				EntryIt.RemoveCurrent();
-				MarkArrayDirty();
+				ResetEntry(Entry);
 				RemoveEntry(ItemClass, InCount - Entry.StackCount);
 			}
 			break;
@@ -164,14 +160,16 @@ void FInventoryList::RemoveEntryByIndex(const int32 InInstanceIndex, const int32
 
 UItemInstance* FInventoryList::GetItemInstanceByIndex(const int32 InInstanceIndex) //const
 {
+	UItemInstance* ItemInstance = NewObject<UItemInstance>(OwnerComponent->GetOwner());
 	for (auto EntryIt = Entries.CreateIterator(); EntryIt; ++EntryIt)
 	{
 		if (const FInventoryEntry& Entry = *EntryIt; Entry.Instance->GetIndex() == InInstanceIndex)
 		{
-			return Entry.Instance;
+			ItemInstance->SetItem(Entry.Instance);
+			break;
 		}
 	}
-	return nullptr;
+	return ItemInstance;
 }
 
 //PRAGMA_ENABLE_OPTIMIZATION
@@ -180,13 +178,13 @@ void FInventoryList::SwapEntry(const int32 IndexA, const int32 IndexB, const FGu
 {
 	//交换实例索引 ,索引决定实例在UI背包格子中的位置
 	// Debug::Print(FString::Printf(TEXT("--FInventoryList::SwapEntry(IndexA：%d, IndexB:%d);"), IndexA, IndexB));
-	MoveInstanceToIndex(GuidA, IndexB, IndexA);
-	MoveInstanceToIndex(GuidB, IndexA, IndexB);
+	MoveInstanceToIndex(GuidA, IndexB);
+	MoveInstanceToIndex(GuidB, IndexA);
 }
 
-void FInventoryList::MoveInstanceToIndex(const FGuid Guid, const int32 Index, const int32 TargetIndex)
+void FInventoryList::MoveInstanceToIndex(const FGuid Guid, const int32 Index)
 {
-	const FInventoryEntry& Entry = FindEntryByGuid(Guid, TargetIndex);
+	const FInventoryEntry& Entry = FindEntryByGuid(Guid);
 	Entry.Instance->SetIndex(Index);
 	//广播更新消息
 	BroadcastChangeMessage(Entry, Entry.StackCount, Entry.StackCount);
@@ -297,7 +295,7 @@ int32 FInventoryList::GetItemCapacity(const TSubclassOf<UObject> ItemClass)
 	return Result;
 }
 
-FInventoryEntry& FInventoryList::GetEmptyEntry(const TSubclassOf<UObject> ItemClass, const int32 StackCount)
+FInventoryEntry& FInventoryList::GetEmptyEntry(const TSubclassOf<UObject>& ItemClass, const int32 StackCount)
 {
 	if (Entries.Num() > 0)
 	{
@@ -348,7 +346,7 @@ FInventoryEntry& FInventoryList::GetNewEntry()
 	return Entries.Last();
 }
 
-FInventoryEntry& FInventoryList::FindEntryByGuid(const FGuid InGuid, const int32 Index)
+FInventoryEntry& FInventoryList::FindEntryByGuid(const FGuid InGuid)
 {
 	for (auto EntryIt = Entries.CreateIterator(); EntryIt; ++EntryIt)
 	{
@@ -357,15 +355,7 @@ FInventoryEntry& FInventoryList::FindEntryByGuid(const FGuid InGuid, const int32
 			return Entry;
 		}
 	}
-	Debug::Print(InGuid.ToString() + TEXT("--FInventoryList::FindEntryByGuid:找不到GUID ！！！"));
-	for (auto EntryIt = Entries.CreateIterator(); EntryIt; ++EntryIt)
-	{
-		if (FInventoryEntry& Entry = *EntryIt; Entry.Instance->GetIndex() == Index)
-		{
-			return Entry;
-		}
-	}
-	Debug::Print(FString::Printf(TEXT("--FInventoryList::FindEntryByGuid:：Index:%d;通过Index也找不到！！！"), Index));
+	Debug::Print(InGuid.ToString() + TEXT("--FInventoryList::FindEntryByGuid:找不到GUID ！！！"), FColor::Red);
 	return Entries.Last();
 }
 
@@ -386,6 +376,14 @@ void FInventoryList::ExpandVolume(const int32 InVolume)
 	{
 		GetNewEntry();
 	}
+}
+
+void FInventoryList::ResetEntry(FInventoryEntry& Entry) const
+{
+	Entry.Instance->SetItemID(INDEX_NONE);
+	Entry.Instance->RemoveStatTagStack(TAG_Inventory_Item_Count);
+	Entry.StackCount = 0;
+	BroadcastChangeMessage(Entry);
 }
 
 void FInventoryList::BroadcastChangeMessage(const FInventoryEntry& Entry, const int32 OldCount, const int32 NewCount) const

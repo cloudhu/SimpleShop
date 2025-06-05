@@ -1,5 +1,7 @@
 // Copyright CloudHu. All Rights Reserved.
 #include "UI/Shop/UW_ShopView.h"
+
+#include "ActorComponents/QuickBarComponent.h"
 #include "Blueprint/DragDropOperation.h"
 #include "Data/ItemTable.h"
 #include "Message/GlobalNativeTags.h"
@@ -65,12 +67,12 @@ void UUW_ShopView::NativeConstruct()
 		BroadcastCategoryMessage(Tmp.Key, 0, Tmp.Value);
 	}
 	//日志记录
-	UE_LOG(LogSimpleShop,Log,TEXT("UW_ShopView商店目录初始化"));
+	UE_LOG(LogSimpleShop, Log, TEXT("UW_ShopView商店目录初始化"));
 	//更新商店物品，显示所有物品类型
 	UpdateItem(TAG_Item_Type_All);
 
 	//日志记录
-	UE_LOG(LogSimpleShop,Log,TEXT("UW_ShopView商店物品更新"));
+	UE_LOG(LogSimpleShop, Log, TEXT("UW_ShopView商店物品更新"));
 }
 
 void UUW_ShopView::NativeDestruct()
@@ -109,32 +111,32 @@ void UUW_ShopView::UpdateItem(const FGameplayTag& TypeTag) const
 		}
 
 		//2.生成物品
-		for (int32 i = 0; i < InTableArray.Num(); i++)
+		int32 TmpIndex = 0;
+		const int32 TotalSlots = InTableArray.Num();
+		const int32 MaxRow = FMath::CeilToInt(static_cast<float>(TotalSlots) / ItemGridCollumn);;
+		for (int32 i = 0; i < MaxRow; i++)
 		{
-			if (UUW_ShopItem* InSlotWidget = CreateWidget<UUW_ShopItem>(GetWorld(), ItemClass))
+			for (int j = 0; j < ItemGridCollumn; ++j)
 			{
-				if (UUniformGridSlot* GridSlot = ItemGrid->AddChildToUniformGrid(InSlotWidget))
+				if (UUW_ShopItem* InSlotWidget = CreateWidget<UUW_ShopItem>(GetWorld(), ItemClass))
 				{
-					//i = 0 , 1  2 3  ,4,5
-					//(0,0) (0,1)
-					//(1,0) (1,1)
-					//(2,0) (2,1)
-					GridSlot->SetRow(FMath::FloorToInt(static_cast<float>(i) / 2.f));
-					if (i & 0x1)//奇数
+					if (UUniformGridSlot* GridSlot = ItemGrid->AddChildToUniformGrid(InSlotWidget))
 					{
-						GridSlot->SetColumn(1);
-					}
-					else//偶数
-					{
-						GridSlot->SetColumn(0);
-					}
+						GridSlot->SetRow(i);
+						GridSlot->SetColumn(j);
 
-					GridSlot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Fill);
-					GridSlot->SetVerticalAlignment(EVerticalAlignment::VAlign_Fill);
-					//把物品数据传递给格子，从而更新格子里面的物品
-					InSlotWidget->UpdateSlot(InTableArray[i]);
-					//店主应该是商品的主人
-					InSlotWidget->SetItemOwner(ShopOwner);
+						GridSlot->SetHorizontalAlignment(HAlign_Fill);
+						GridSlot->SetVerticalAlignment(VAlign_Fill);
+						//把物品数据传递给格子，从而更新格子里面的物品
+						InSlotWidget->UpdateSlot(InTableArray[TmpIndex]);
+						//店主应该是商品的主人
+						InSlotWidget->SetItemOwner(ShopOwner);
+						TmpIndex++;
+						if (TmpIndex >= TotalSlots)
+						{
+							break;
+						}
+					}
 				}
 			}
 		}
@@ -150,7 +152,48 @@ bool UUW_ShopView::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEven
 	{
 		if (const UUW_ItemSlotBase* DraggedSlot = Cast<UUW_ItemSlotBase>(InDragDropOperation->Payload))
 		{
-			DraggedSlot->BroadcastTransactionMessage();
+			//交易消息声明
+			FTransactionMessage TransactionMessage;
+			//交易时,物品所有者被设置成触发交易的角色
+			TransactionMessage.Buyer = nullptr;
+			TransactionMessage.Seller = DraggedSlot->GetItemOwner();
+			TransactionMessage.ItemID = DraggedSlot->GetItemID();
+			TransactionMessage.InstanceID = DraggedSlot->GetInstanceIndex();
+			TransactionMessage.Price = DraggedSlot->GetPrice() * 0.5f;
+			if (const UObject* Src = GetDefault<UObject>(DraggedSlot->GetDataTable()->ItemDefinition))
+			{
+				if (const IItemDefinitionInterface* ItemDef = Cast<IItemDefinitionInterface>(Src))
+				{
+					TransactionMessage.DisplayName = ItemDef->Execute_GetDisplayName(Src);
+				}
+				else if (Src->Implements<UItemDefinitionInterface>())
+				{
+					TransactionMessage.DisplayName = IItemDefinitionInterface::GetDisplayName(Src);
+				}
+			}
+			int32 MaxSellAmount = 0;
+
+			if (DraggedSlot->IsQuickBarItem())
+			{
+				if (const UQuickBarComponent* QuickBar = UQuickBarComponent::FindQuickBarComponent(GetOwningPlayerPawn()))
+				{
+					MaxSellAmount = QuickBar->GetItemAmountByIndex(DraggedSlot->GetInstanceIndex());
+					TransactionMessage.bIsQuickBarItem = true;
+				}
+			}
+			else
+			{
+				//获取背包组件
+				if (const UInventoryManagerActorComponent* InventoryComponent = UInventoryManagerActorComponent::FindInventoryManagerComponent(GetOwningPlayerPawn()))
+				{
+					MaxSellAmount = InventoryComponent->GetTotalItemCountByIndex(DraggedSlot->GetInstanceIndex());
+				}
+			}
+
+			TransactionMessage.MaxCount = MaxSellAmount;
+			//用游戏消息子系统广播交易消息
+			UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
+			MessageSystem.BroadcastMessage(TAG_Transaction_Message, TransactionMessage);
 			bDrop = true;
 		}
 	}

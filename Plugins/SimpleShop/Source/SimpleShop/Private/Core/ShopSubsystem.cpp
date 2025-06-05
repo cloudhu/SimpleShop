@@ -38,11 +38,12 @@ void UShopSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	//缓存物品数据
 	GetSlotTablesTemplate();
 	//日志记录
-	UE_LOG(LogSimpleShop,Log,TEXT("UShopSubsystem已经初始化"));
+	UE_LOG(LogSimpleShop, Log, TEXT("UShopSubsystem已经初始化"));
 	// 监听交易消息
 	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 	TransactionListenerHandle = MessageSystem.RegisterListener(TAG_ConfirmedTransaction_Message, this, &ThisClass::OnNotificationTransactionMessage);
 }
+
 //PRAGMA_ENABLE_OPTIMIZATION
 
 const TArray<FItemTable*>* UShopSubsystem::GetSlotTablesTemplate()
@@ -50,7 +51,7 @@ const TArray<FItemTable*>* UShopSubsystem::GetSlotTablesTemplate()
 	//首先判断有没有缓存数据,如果有则直接返回缓存的数据,避免重复读取
 	if (!CacheSlotTables.Num())
 	{
-		if (SlotTablePtr)//没有缓存数据则从数据表指针中读取到缓存数据中
+		if (SlotTablePtr) //没有缓存数据则从数据表指针中读取到缓存数据中
 		{
 			SlotTablePtr->GetAllRows(TEXT("Slot Tables"), CacheSlotTables);
 		}
@@ -144,30 +145,34 @@ void UShopSubsystem::OnNotificationTransactionMessage(FGameplayTag Channel, cons
 	ResultMessage.ItemID = Notification.ItemID;
 	ResultMessage.Amount = Notification.Count;
 	//找到买家的钱包
-	if (UWalletActorComponent* BuyerWallet = FindWalletActorComponent(Notification.Buyer)) 
+	if (Notification.Buyer)
 	{
-		int32 Cost = Notification.Price; //Todo:这些在服务器上进行
-		if (Notification.bIsCompoundItem)
-		{//如果是合成物品，则需要另外计算价格
-			Cost = CalculateCompoundItemCost(GetSlotTableByID(Notification.ItemID), Notification.Buyer, true);
-		}
-
-		if (BuyerWallet->CanAfford(Cost)) //从买家钱包进行支出
+		if (UWalletActorComponent* BuyerWallet = FindWalletActorComponent(Notification.Buyer))
 		{
-			BuyerWallet->Transaction(Notification.Price, false);
-			//交易消息:成功
-			ResultMessage.bSuccess = true;
-
-			//买家支付成功之后就应该得到物品
-			if (UInventoryManagerActorComponent* InventoryManager = FindInventoryManagerActorComponent(Notification.Buyer))
+			int32 Cost = Notification.Price; //Todo:这些在服务器上进行
+			if (Notification.bIsCompoundItem)
 			{
-				InventoryManager->AddItemDefinition(GetSlotTableByID(Notification.ItemID)->ItemDefinition, Notification.ItemID, Notification.Count);
+				//如果是合成物品，则需要另外计算价格
+				Cost = CalculateCompoundItemCost(GetSlotTableByID(Notification.ItemID), Notification.Buyer, true);
 			}
-		}
-		else
-		{
-			//交易消息:失败
-			ResultMessage.bSuccess = false;
+
+			if (BuyerWallet->CanAfford(Cost)) //从买家钱包进行支出
+			{
+				BuyerWallet->Transaction(Notification.Price, false);
+				//交易消息:成功
+				ResultMessage.bSuccess = true;
+
+				//买家支付成功之后就应该得到物品
+				if (UInventoryManagerActorComponent* InventoryManager = FindInventoryManagerActorComponent(Notification.Buyer))
+				{
+					InventoryManager->AddItemDefinition(GetSlotTableByID(Notification.ItemID)->ItemDefinition, Notification.ItemID, Notification.Count);
+				}
+			}
+			else
+			{
+				//交易消息:失败
+				ResultMessage.bSuccess = false;
+			}
 		}
 	}
 
@@ -181,13 +186,13 @@ void UShopSubsystem::OnNotificationTransactionMessage(FGameplayTag Channel, cons
 			ResultMessage.bSuccess = true;
 		}
 
-		if (Notification.bIsQuickBarItem)//是否是快捷栏的物品，如果是快捷栏的物品则需要从快捷栏移除
-			{
+		if (Notification.bIsQuickBarItem) //是否是快捷栏的物品，如果是快捷栏的物品则需要从快捷栏移除
+		{
 			if (UQuickBarComponent* QuickBar = UQuickBarComponent::FindQuickBarComponent(Notification.Seller))
 			{
 				QuickBar->RemoveItemFromSlot(Notification.InstanceIndex);
 			}
-			}
+		}
 		else
 		{
 			//从卖家的背包中移除物品
